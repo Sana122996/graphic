@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据长图生成器 (细节打磨终极版)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --blur-intensity: 10px;
+            --num-color: #E60012; 
+        }
+
+        /* ====== 6套主题配色 ====== */
+        .theme-default.mode-a { --bg-base: #FFF6E9; --accent: 74, 144, 226; --card-bg-rgb: 255, 255, 255; --text-main: #333333; --text-sub: #666666; --border-color: rgba(238, 222, 200, 0.5); }
+        .theme-default.mode-b { --b-bg: #F6F7F9; --b-card: #FFFFFF; --b-head: #333333; --b-date-bg: #3062D5; --b-accent: #E67817; --b-text: #333333; --b-val-bg: #F4F5F7; --b-val-lbl: #333333; }
+        
+        .theme-blue.mode-a { --bg-base: #EBF2FA; --accent: 25, 103, 210; --card-bg-rgb: 255, 255, 255; --text-main: #1A365D; --text-sub: #4A5568; --border-color: rgba(66, 153, 225, 0.2); }
+        .theme-blue.mode-b { --b-bg: #F0F4F8; --b-card: #FFFFFF; --b-head: #1A365D; --b-date-bg: #2563EB; --b-accent: #E67817; --b-text: #1E293B; --b-val-bg: #E2E8F0; --b-val-lbl: #1A365D;}
+
+        .theme-gold.mode-a { --bg-base: #FFFAF0; --accent: 218, 165, 32; --card-bg-rgb: 255, 255, 255; --text-main: #4B3621; --text-sub: #6B4E31; --border-color: rgba(218, 165, 32, 0.3); }
+        .theme-gold.mode-b { --b-bg: #FFFDF8; --b-card: #FFFFFF; --b-head: #4A3525; --b-date-bg: #B8860B; --b-accent: #DAA520; --b-text: #4A3525; --b-val-bg: #FFF8DC; --b-val-lbl: #4A3525;}
+
+        .theme-purple.mode-a { --bg-base: #F5F3FF; --accent: 128, 90, 213; --card-bg-rgb: 255, 255, 255; --text-main: #44337A; --text-sub: #6B46C1; --border-color: rgba(159, 122, 234, 0.2); }
+        .theme-purple.mode-b { --b-bg: #FAF5FF; --b-card: #FFFFFF; --b-head: #553C9A; --b-date-bg: #6B46C1; --b-accent: #805AD5; --b-text: #322659; --b-val-bg: #E9D8FD; --b-val-lbl: #322659;}
+
+        .theme-red.mode-a { --bg-base: #FFF5F5; --accent: 229, 62, 62; --card-bg-rgb: 255, 255, 255; --text-main: #5C0011; --text-sub: #820014; --border-color: rgba(252, 129, 129, 0.2); }
+        .theme-red.mode-b { --b-bg: #FDFDFD; --b-card: #FFFFFF; --b-head: #820014; --b-date-bg: #A8071A; --b-accent: #CF1322; --b-text: #333333; --b-val-bg: #FFF1F0; --b-val-lbl: #5C0011;}
+
+        .theme-dark { --num-color: #FF5A5F; }
+        .theme-dark.mode-a { --bg-base: #141414; --accent: 160, 174, 192; --card-bg-rgb: 30, 30, 30; --text-main: #F7FAFC; --text-sub: #E2E8F0; --border-color: rgba(255, 255, 255, 0.1); }
+        .theme-dark.mode-b { --b-bg: #141414; --b-card: #1F1F1F; --b-head: #000000; --b-date-bg: #333333; --b-accent: #E67817; --b-text: #F7FAFC; --b-val-bg: #2C2C2C; --b-val-lbl: #F7FAFC; }
+
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        body { margin: 0; background: #e9ecef; overflow: hidden; }
+        
+        #app { display: flex; width: 100vw; height: 100vh; }
+        
+        .sidebar { flex: 0 0 450px; background: white; padding: 24px; overflow-y: auto; box-shadow: 2px 0 15px rgba(0,0,0,0.08); z-index: 10; height: 100%; }
+        .canvas-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 40px; overflow-y: auto; height: 100%; transition: background 0.3s; background-color: #f0f2f5; }
+
+        .sidebar h2 { margin-top: 0; font-size: 18px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        .form-group { margin-bottom: 16px; background: #f8f9fa; padding: 12px; border-radius: 6px; }
+        .form-group label { display: block; font-size: 13px; color: #444; margin-bottom: 8px; font-weight: bold; }
+        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .form-group textarea { height: 80px; resize: vertical; }
+        
+        .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .radio-btn { padding: 6px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;}
+        .radio-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
+
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 8px; }
+        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+        .btn-upload { display: block; width: 100%; background: #fff; border: 1px dashed #999; color: #666; text-align: center; padding: 10px; border-radius: 4px; cursor: pointer; }
+        .btn-export { background: #4A90E2; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 24px; width: 100%;}
+        .btn-export:hover { background: #357ABD; }
+        
+        /* 画布直编状态样式 */
+        .editable { transition: all 0.2s; border-radius: 4px; border: 1px solid transparent; }
+        .editable:hover { box-shadow: 0 0 0 1px rgba(74, 144, 226, 0.5); cursor: text; }
+        .editable:focus { outline: none; box-shadow: 0 0 0 2px #4A90E2; background: rgba(255,255,255,0.2); }
+        .clickable-tag:hover { box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.8); cursor: pointer; }
+
+        .watermark-logo {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60%; opacity: 0.05; pointer-events: none; z-index: 9999; object-fit: contain; filter: brightness(0);
+        }
+        .theme-dark .watermark-logo { filter: brightness(0) invert(1); opacity: 0.04; }
+
+        .poster { width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s;}
+        .title-bento, .main-title { font-family: 'Noto Serif SC', serif !important; font-weight: 900; margin: 0; letter-spacing: 1px; }
+        
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; position: relative; z-index: 2; min-height: 80px; }
+        .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
+        .footer-left .slogan { font-size: 16px; color: var(--text-main); }
+        .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; }
+        .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
+
+        /* ==================== 模式 A：预期模式 ==================== */
+        .poster.mode-a {
+            padding: 40px;
+            background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); 
+            background-color: var(--bg-base);
+        }
+        .glass-card {
+            background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity));
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px;
+        }
+        .mode-a .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid var(--text-main); padding-bottom: 20px;}
+        .mode-a .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .mode-a .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
+        .mode-a .header-logo { height: 24px; margin-left: 6px; object-fit: contain; }
+        .mode-a .title-bento { font-size: 44px; color: var(--text-main);}
+        .mode-a .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
+        .mode-a .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
+        .mode-a .card-tall { grid-row: span 2; }
+        .mode-a .data-value { font-size: 64px; font-weight: 900; color: var(--num-color); margin: 0; line-height: 1; text-align: center; transition: color 0.3s;}
+        .mode-a .data-unit { font-size: 28px; margin-left: 2px;}
+        .mode-a .data-desc { font-size: 16px; color: var(--text-main); line-height: 1.6; }
+        .mode-a .card-title { font-size: 22px; font-weight: bold; color: var(--text-main); margin-top: 0; margin-bottom: 16px; }
+
+        /* ==================== 模式 B：公布数据模式 ==================== */
+        .poster.mode-b { padding: 40px; background-color: var(--b-bg); color: var(--b-text); }
+        
+        .mode-b .header-box { 
+            display: flex; align-items: center; gap: 15px; flex-wrap: nowrap;
+            margin-bottom: 20px; position: relative; z-index: 2; padding-bottom: 15px;
+            border-bottom: 1px solid rgba(150,150,150,0.3);
+            white-space: nowrap;
+        }
+        .mode-b .date-box-left {
+            background: var(--b-date-bg); color: white; padding: 12px 18px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            flex-shrink: 0;
+        }
+        .mode-b .date-year { font-size: 20px; letter-spacing: 6px; opacity: 0.9; margin-bottom: 4px; }
+        .mode-b .date-md { font-size: 38px; font-weight: 900; line-height: 1; }
+        
+        .mode-b .title-right-wrapper { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;}
+        .mode-b .main-title { font-size: 50px; color: var(--b-text); line-height: 1.1; margin-bottom: 12px; white-space: nowrap; overflow: visible;}
+        .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
+        .mode-b .sub-meta img { height: 18px; opacity: 0.9;} 
+        
+        .mode-b .data-section { background: var(--b-card); margin-bottom: 20px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
+        .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
+        .mode-b .sec-num { background: var(--b-accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold;}
+        
+        .mode-b .sec1-body { display: flex; padding: 25px 20px; align-items: center; gap: 20px; }
+        .mode-b .val-box-inner { background: var(--b-val-bg); padding: 10px 15px; text-align: center; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); transition: background 0.3s;}
+        .mode-b .val-lbl { font-size: 18px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
+        
+        /* 核心修复：缩小状态标签字体，强制不换行 */
+        .mode-b .status-tag { 
+            display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; 
+            color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s;
+            white-space: nowrap; /* 绝对不换行 */
+        }
+        .mode-b .status-tag.low { color: #27AE60; opacity: 1; }
+        .mode-b .status-tag.high { color: var(--num-color); opacity: 1; }
+        
+        .mode-b .num-col { flex-shrink: 0; }
+        .mode-b .sec-value { font-size: 72px; font-weight: 900; color: var(--num-color); line-height: 1; transition: color 0.3s;}
+        .mode-b .sec-unit { font-size: 32px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
+        .mode-b .sec-desc { font-size: 15px; line-height: 1.6; color: var(--b-text); opacity: 0.85; flex: 1; text-align: justify;}
+
+        .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; margin-bottom: 20px;}
+        .mode-b .sec-small { background: var(--b-card); padding: 20px; border: 1px solid rgba(0,0,0,0.05);}
+        .mode-b .sec-small-head { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(150,150,150,0.2);}
+        
+        .mode-b .sec-small-body { display: flex; gap: 15px; align-items: center; margin-bottom: 15px;}
+        .mode-b .sec-small-body .val-box-inner { padding: 6px 10px; } /* 微调内边距防挤压 */
+        .mode-b .sec-small-body .status-tag { font-size: 11px; } /* 副模块状态字体进一步微调 */
+        .mode-b .sec-small-body .sec-value { font-size: 58px; }
+        .mode-b .sec-small-body .sec-unit { font-size: 26px; }
+
+        /* 核心修复：Banner 横幅圆角拼接 */
+        .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 30px;}
+        .mode-b .banner-left { 
+            background: var(--b-date-bg); color: white; padding: 20px; width: 170px; 
+            display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center;
+            border-radius: 8px 0 0 8px; /* 左边矩形的左侧有圆角，右侧无圆角 */
+        }
+        .mode-b .banner-right { 
+            background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; 
+            line-height: 1.7; text-align: justify; opacity: 0.95;
+            border-radius: 0 8px 8px 0; /* 右边矩形的右侧有圆角，左侧无圆角 */
+        }
+
+        .checkbox-label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #555; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="sidebar">
+        <h2>长图生成器</h2>
+        
+        <div style="background: #E8F0FE; color: #1967D2; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; line-height: 1.5;">
+            💡 <strong>画布直编功能：</strong><br>
+            1. 鼠标点击图片上的标题、数值或正文，即可**直接输入修改**。<br>
+            2. 点击【符合预期/高于预期...】的标签，即可**循环切换状态**。
+        </div>
+
+        <div class="form-group">
+            <label>🎨 0. 选择主题配色</label>
+            <div class="radio-group">
+                <div class="radio-btn" :class="{active: theme === 'default'}" @click="theme = 'default'">经典暖白</div>
+                <div class="radio-btn" :class="{active: theme === 'blue'}" @click="theme = 'blue'">科技蓝</div>
+                <div class="radio-btn" :class="{active: theme === 'gold'}" @click="theme = 'gold'">琉璃金</div>
+                <div class="radio-btn" :class="{active: theme === 'purple'}" @click="theme = 'purple'">魅影紫</div>
+                <div class="radio-btn" :class="{active: theme === 'red'}" @click="theme = 'red'">玫瑰红</div>
+                <div class="radio-btn" :class="{active: theme === 'dark'}" @click="theme = 'dark'">极夜暗黑</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🖼️ 1. 选择制图版式</label>
+            <div class="radio-group">
+                <div class="radio-btn" :class="{active: mode === 'expect'}" @click="mode = 'expect'">预期模板</div>
+                <div class="radio-btn" :class="{active: mode === 'actual'}" @click="mode = 'actual'">公布模板</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>📊 2. 选择数据类型 (智能联动标题)</label>
+            <div class="radio-group">
+                <div class="radio-btn" :class="{active: dataType === 'CPI'}" @click="dataType = 'CPI'">CPI 数据</div>
+                <div class="radio-btn" :class="{active: dataType === '非农'}" @click="dataType = '非农'">非农 数据</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>⚙️ 3. 显示设置</label>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <label class="checkbox-label">
+                    <input type="checkbox" v-model="showWatermark"> 显示居中大水印
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" v-model="showQRCode"> 显示底部二维码与引导语
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>📅 制图日期</label>
+            <input type="text" v-model="date">
+        </div>
+
+        <hr style="border:0; border-top:1px solid #ddd; margin: 20px 0;">
+
+        <div v-if="mode === 'expect'">
+            <div class="form-group"><label>主标题</label><input type="text" v-model="ex.title"></div>
+            <div class="form-group"><label>顶部核心数据</label><input type="text" v-model="ex.mainData"></div>
+            <div class="form-group"><label>左侧模块标题</label><input type="text" v-model="ex.leftTitle"></div>
+        </div>
+
+        <div v-if="mode === 'actual'">
+            <div class="form-group"><label>主标题</label><input type="text" v-model="ac.title"></div>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 请直接在右侧画布上点击数字和文案进行修改 👇</p>
+        </div>
+
+        <div class="form-group" v-if="showQRCode">
+            <label>🔗 自定义底部二维码</label>
+            <div class="file-upload-wrapper">
+                <div class="btn-upload">点击选择本地二维码图片</div>
+                <input type="file" @change="uploadQrCode" accept="image/*">
+            </div>
+        </div>
+
+        <button class="btn-export" @click="exportImage">🚀 一键导出高清长图</button>
+    </div>
+
+    <div class="canvas-area">
+        <div id="poster" class="poster" :class="[mode === 'expect' ? 'mode-a' : 'mode-b', 'theme-' + theme]">
+            
+            <img v-if="showWatermark" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
+            
+            <div v-if="mode === 'expect'">
+                <div class="header-box">
+                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false">{{ ex.title }}</h1>
+                    <div class="meta-section">
+                        <div class="header-meta"><span class="prefix-text">看{{ dataType }}，到&nbsp;</span><img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'"></div>
+                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</div>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <div class="glass-card card-large">
+                        <div style="flex-shrink: 0; min-width: 150px; text-align: center;">
+                            <div class="data-value editable" contenteditable="true" spellcheck="false">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
+                        </div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.mainDesc)"></div>
+                    </div>
+
+                    <div class="glass-card card-tall">
+                        <h3 class="card-title editable" contenteditable="true" spellcheck="false">{{ ex.leftTitle }}</h3>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.leftDesc)"></div>
+                    </div>
+
+                    <div class="glass-card" style="text-align: center;">
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)"></div>
+                    </div>
+
+                    <div class="glass-card" style="text-align: center;">
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="mode === 'actual'">
+                <div class="header-box">
+                    <div class="date-box-left editable" contenteditable="true" spellcheck="false">
+                        <span class="date-year">{{ date.split('-')[0] }}</span>
+                        <span class="date-md">{{ date.split('-')[1] }}-{{ date.split('-')[2] }}</span>
+                    </div>
+                    <div class="title-right-wrapper">
+                        <h1 class="main-title editable" contenteditable="true" spellcheck="false">{{ ac.title }}</h1>
+                        <div class="sub-meta">
+                            <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> &nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s1Title }}</span></div>
+                    <div class="sec1-body">
+                        <div class="val-box">
+                            <div class="val-box-inner">
+                                <div class="val-lbl">公布值</div>
+                                <div class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</div>
+                            </div>
+                        </div>
+                        <div class="num-col editable" contenteditable="true" spellcheck="false">
+                            <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
+                        </div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s1Desc)"></div>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="sec-small">
+                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s2Title }}</span></div>
+                        <div class="sec-small-body">
+                            <div class="val-box">
+                                <div class="val-box-inner">
+                                    <div class="val-lbl" style="font-size: 16px;">公布值</div>
+                                    <div class="status-tag editable clickable-tag" @click="toggleStatus('s2Status')" :class="ac.s2Status" title="点击循环切换状态">{{ getStatusText(ac.s2Status) }}</div>
+                                </div>
+                            </div>
+                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                                <span class="sec-value">{{ splitUnit(ac.s2Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s2Value).unit }}</span>
+                            </div>
+                        </div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s2Desc)"></div>
+                    </div>
+                    
+                    <div class="sec-small">
+                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s3Title }}</span></div>
+                        <div class="sec-small-body">
+                            <div class="val-box">
+                                <div class="val-box-inner">
+                                    <div class="val-lbl" style="font-size: 16px;">公布值</div>
+                                    <div class="status-tag editable clickable-tag" @click="toggleStatus('s3Status')" :class="ac.s3Status" title="点击循环切换状态">{{ getStatusText(ac.s3Status) }}</div>
+                                </div>
+                            </div>
+                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                                <span class="sec-value">{{ splitUnit(ac.s3Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s3Value).unit }}</span>
+                            </div>
+                        </div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s3Desc)"></div>
+                    </div>
+                </div>
+
+                <div class="banner-box">
+                    <div class="banner-left editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerTitle)"></div>
+                    <div class="banner-right editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerDesc)"></div>
+                </div>
+            </div>
+
+            <div class="footer" v-if="showQRCode">
+                <div class="footer-left">
+                    <div class="site">
+                        <img src="icon.svg" style="height: 20px;" alt="" onerror="this.style.display='none'">
+                        JIN10.COM
+                    </div>
+                    <div class="slogan">看{{ dataType }}，到金十，立即下载金十数据APP>></div>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <img :src="qrCodeUrl" class="qr-code" alt="QR">
+                </div>
+            </div>
+            <div v-else style="height: 40px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            theme: 'red', 
+            mode: 'actual', 
+            dataType: 'CPI',
+            date: '2026-04-10',
+            showWatermark: true,
+            showQRCode: true,
+            qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
+            
+            ex: {
+                title: '美国3月CPI预期', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
+            },
+            ac: {
+                title: '美国3月CPI数据', 
+                s1Title: '美国3月未季调CPI年率', 
+                s1Value: '3.3%', 
+                s1Status: 'match', 
+                s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', 
+                s2Title: '核心CPI年率', 
+                s2Value: '2.6%', 
+                s2Status: 'low', 
+                s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', 
+                s3Title: '核心CPI月率', 
+                s3Value: '0.2%', 
+                s3Status: 'low', 
+                s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', 
+                bannerTitle: '3月CPI<br>“患上高烧”', 
+                bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
+            }
+        },
+        watch: {
+            dataType(newVal, oldVal) {
+                if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
+                if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
+                if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
+                
+                if (newVal === '非农') {
+                    this.ex.mainData = '25万';
+                    this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
+                    this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
+                    
+                    this.ac.title = '美国3月非农数据';
+                    this.ac.s1Title = '美国3月非农就业人数季调后'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
+                    this.ac.s2Title = '美国3月失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
+                    this.ac.s3Title = '美国平均时薪同比'; this.ac.s3Value = '4.1%'; this.ac.s3Status = 'low'; this.ac.s3Desc = '同比率录得4.1%，符合预期。';
+                    
+                    this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
+                }
+            }
+        },
+        methods: {
+            toggleStatus(field) {
+                const states = ['match', 'high', 'low'];
+                const currentIndex = states.indexOf(this.ac[field]);
+                const nextIndex = (currentIndex + 1) % states.length;
+                this.ac[field] = states[nextIndex];
+            },
+            splitUnit(val) {
+                if (!val) return { num: '', unit: '' };
+                const match = String(val).match(/^([-\d.]+)(.*)$/);
+                return match ? { num: match[1], unit: match[2] } : { num: val, unit: '' };
+            },
+            formatText(text) {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            },
+            getStatusText(status) {
+                return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期');
+            },
+            uploadQrCode(event) {
+                const file = event.target.files[0];
+                if (file) this.qrCodeUrl = URL.createObjectURL(file);
+            },
+            exportImage() {
+                const element = document.getElementById('poster');
+                const btn = document.querySelector('.btn-export');
+                const originalText = btn.innerText;
+                btn.innerText = '正在生成 高清大图...';
+
+                html2canvas(element, { scale: 1242 / element.offsetWidth, useCORS: true, backgroundColor: null }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `金十_${this.dataType}_${this.mode === 'expect' ? '预期' : '公布'}_${this.date}.jpg`;
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    link.click();
+                    btn.innerText = originalText;
+                }).catch(err => {
+                    alert('导出失败，请尝试在本地环境(Live Server)运行。');
+                    btn.innerText = originalText;
+                });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
