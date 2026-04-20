@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (防漏换码版)</title>
+    <title>数据长图生成器 (智能联动终极版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -60,18 +60,9 @@
         .btn-export { background: #4A90E2; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 24px; width: 100%;}
         .btn-export:hover { background: #357ABD; }
         
-        /* 🚨 新增：防漏换二维码高亮UI 🚨 */
-        .qr-upload-box { 
-            background: #FFF0F0 !important; 
-            border: 1px dashed #FF4D4F !important; 
-            box-shadow: 0 4px 12px rgba(255, 77, 79, 0.1);
-        }
+        .qr-upload-box { background: #FFF0F0 !important; border: 1px dashed #FF4D4F !important; box-shadow: 0 4px 12px rgba(255, 77, 79, 0.1); }
         .qr-upload-box label { color: #CF1322 !important; font-size: 14px !important; }
-        .blink-warning { 
-            background: #FF4D4F; color: white; padding: 2px 6px; border-radius: 4px; 
-            font-size: 11px; vertical-align: middle; margin-left: 4px;
-            animation: blink 2s infinite; 
-        }
+        .blink-warning { background: #FF4D4F; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; vertical-align: middle; margin-left: 4px; animation: blink 2s infinite; }
         .warning-tip { font-size: 12px; color: #CF1322; margin-bottom: 10px; line-height: 1.4; font-weight: bold; }
         .highlight-btn { border-color: #FF4D4F !important; color: #CF1322 !important; background: white !important; font-weight: bold;}
         .highlight-btn:hover { background: #FFF5F5 !important; }
@@ -144,6 +135,14 @@
         .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
         
         .mode-b .sub-meta img { height: 22px; opacity: 0.9;} 
+        
+        /* 💡 新增：专门弱化竖线和日期的样式 */
+        .mode-b .date-divider-group { 
+            font-weight: 400; /* 取消加粗，竖线变细 */
+            font-size: 14px;  /* 字号调小 */
+            opacity: 0.7;     /* 增加透明度，弱化层级 */
+            margin-left: 4px;
+        }
         
         .mode-b .data-section { background: var(--b-card); margin-bottom: 20px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
@@ -329,7 +328,8 @@
                     <div class="title-right-wrapper">
                         <h1 class="main-title editable" contenteditable="true" spellcheck="false">{{ ac.title }}</h1>
                         <div class="sub-meta">
-                            <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> &nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</span>
+                            <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
+                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</span></span>
                         </div>
                     </div>
                 </div>
