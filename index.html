@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (全能旗舰版)</title>
+    <title>数据长图生成器 (Excel联动旗舰版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -54,7 +54,7 @@
         .radio-btn { padding: 6px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;}
         .radio-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
 
-        .btn-ctrl { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 10px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
+        .btn-ctrl { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 6px 10px; cursor: pointer; transition: all 0.2s; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;}
         .btn-ctrl:hover { background: #f0f0f0; border-color: #aaa;}
         .grid-ctrl { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;}
 
@@ -86,12 +86,11 @@
         .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; position: relative; z-index: 2; min-height: 80px; }
         .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
         .footer-left .slogan { font-size: 16px; color: var(--text-main); }
-        
         .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
 
-        /* ==================== 公共模式 A 背景 (供预期和表格使用) ==================== */
+        /* ==================== 公共模式 A 背景 ==================== */
         .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
         .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
         
@@ -114,11 +113,22 @@
         .mode-table .centered-title { font-size: 46px; color: var(--text-main); margin-bottom: 12px; }
         .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
         .mode-table .header-logo { height: 20px; object-fit: contain; }
-        .mode-table .table-wrapper { padding: 30px; }
-        .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 20px; text-align: justify; opacity: 0.9; }
-        .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; }
-        .mode-table .table-head-row td { background-color: rgba(var(--accent), 0.12); font-weight: bold; font-size: 17px; }
+        
+        .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; text-align: center; opacity: 0.9; }
+        /* 1. 表格铺满卡片，去除内部 padding */
+        .mode-table .table-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
+        /* 隐藏表格外边框，与卡片边缘融为一体 */
+        .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border-style: hidden; }
+        .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; position: relative;}
+        
+        /* 单元格选中状态 */
+        .table-cell.selected-cell { outline: 2px solid #4A90E2; outline-offset: -2px; box-shadow: inset 0 0 15px rgba(74, 144, 226, 0.2); z-index: 10; }
+        .table-cell-content { outline: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; min-height: 1.5em;}
+        
+        /* 背景色类 */
+        .bg-theme { background-color: rgba(var(--accent), 0.12) !important; }
+        .bg-gray { background-color: rgba(0,0,0,0.04) !important; }
+        .theme-dark .bg-gray { background-color: rgba(255,255,255,0.08) !important; }
 
         /* ==================== 模式 B：公布数据模式 ==================== */
         .poster.mode-b { padding: 40px; background-color: var(--b-bg); color: var(--b-text); }
@@ -190,7 +200,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="mode !== 'table'">
             <label>📊 2. 选择数据类型 (联动标题)</label>
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: dataType === 'CPI'}" @click="dataType = 'CPI'">CPI 数据</div>
@@ -199,20 +209,12 @@
         </div>
         
         <div class="form-group">
-            <label>⚙️ 3. 显示设置</label>
-            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <label class="checkbox-label">
-                    <input type="checkbox" v-model="showWatermark"> 显示大水印
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" v-model="showQRCode"> 显示底部二维码
-                </label>
+            <label>⚙️ 3. 显示设置 & 制图日期</label>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px;">
+                <label class="checkbox-label"><input type="checkbox" v-model="showWatermark"> 大水印</label>
+                <label class="checkbox-label"><input type="checkbox" v-model="showQRCode"> 底部活码</label>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label>📅 制图日期</label>
-            <input type="text" v-model="date">
+            <input type="text" v-model="date" placeholder="制图日期">
         </div>
 
         <hr style="border:0; border-top:1px solid #ddd; margin: 20px 0;">
@@ -221,20 +223,26 @@
             <div class="form-group"><label>主标题</label><input type="text" v-model="ex.title"></div>
             <div class="form-group"><label>顶部核心数据</label><input type="text" v-model="ex.mainData"></div>
             <div class="form-group"><label>左侧模块标题</label><input type="text" v-model="ex.leftTitle"></div>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 文案请直接点击右侧画布修改 👇</p>
         </div>
 
         <div v-if="mode === 'actual'">
             <div class="form-group"><label>主标题</label><input type="text" v-model="ac.title"></div>
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 文案请直接点击右侧画布修改 👇</p>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 状态及文案请直接在右侧画布修改 👇</p>
         </div>
 
         <div v-if="mode === 'table'">
+            
+            <div class="form-group" style="background: #E8F0FE; border: 1px solid #A0C3FF;">
+                <label style="color: #1967D2;">📋 从 Excel 快速导入</label>
+                <textarea v-model="excelPaste" placeholder="在 Excel 中选中表格复制，然后粘贴到这里..." style="height: 60px;"></textarea>
+                <button class="btn-ctrl" style="width:100%; margin-top:8px; background:#4A90E2; color:white; border:none; font-weight:bold;" @click="importExcel">⬇️ 一键生成表格</button>
+            </div>
+
             <div class="form-group"><label>主标题</label><input type="text" v-model="tb.title"></div>
             
             <div class="form-group">
-                <div class="grid-ctrl">
-                    <label style="margin:0;">行列控制 (动态增减)</label>
-                </div>
+                <div class="grid-ctrl"><label style="margin:0;">行列调整</label></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
                     <div>
                         <div style="font-size:12px; margin-bottom:6px; color:#666;">行数: {{tb.rows}}</div>
@@ -253,10 +261,25 @@
                 </div>
             </div>
 
+            <div class="form-group" style="background: #FFF7E6; border: 1px solid #FFD591;">
+                <label style="color: #D46B08;">🖌️ 单元格设置 (先点击右侧选中格子)</label>
+                <div v-if="selectedCell" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <button class="btn-ctrl" @click="toggleCellProp('bold')"><b>加粗</b></button>
+                    <button class="btn-ctrl" @click="setCellBg('theme')"><span style="color:var(--accent-text, #4A90E2)">■</span> 主色底</button>
+                    <button class="btn-ctrl" @click="setCellBg('gray')"><span style="color:#999">■</span> 浅灰底</button>
+                    <button class="btn-ctrl" @click="setCellBg('')">⭕ 清空底色</button>
+                    <button class="btn-ctrl" @click="mergeCell('right')">向右合并</button>
+                    <button class="btn-ctrl" @click="mergeCell('down')">向下合并</button>
+                    <button class="btn-ctrl" @click="unmergeCell" style="color: #E60012;">取消合并</button>
+                </div>
+                <div v-else style="font-size:12px;color:#D46B08; text-align: center; padding: 8px 0;">
+                    👈 请在右边表格点选一个单元格
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>列宽比例设定 (用空格隔开，对应每一列)</label>
                 <input type="text" v-model="tb.colWidthsStr" @change="updateColWidths" placeholder="例如: 30 35 35">
-                <div style="font-size: 12px; color: #888; margin-top: 4px;">当前分配: {{ tb.colWidthsStr }}</div>
             </div>
 
             <div class="form-group">
@@ -264,12 +287,6 @@
                 <input type="number" v-model="tb.rowHeight" step="5">
             </div>
             
-            <div class="form-group">
-                <label>表格上方描述语 (留空则不显示)</label>
-                <textarea v-model="tb.desc" placeholder="请输入描述文本，支持在右侧直接编辑..."></textarea>
-            </div>
-            
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 表格内数据请直接在右侧画布点击输入 👇</p>
         </div>
 
         <div class="form-group qr-upload-box" v-if="showQRCode">
@@ -285,7 +302,7 @@
     </div>
 
     <div class="canvas-area" data-gramm="false">
-        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" data-gramm="false">
+        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" data-gramm="false" @click="handleCanvasClick">
             
             <img v-if="showWatermark" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
             
@@ -324,27 +341,33 @@
                 <div class="header-box-centered">
                     <h1 class="title-bento editable centered-title" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
                     <div class="meta-centered">
-                        看{{ dataType }}，到&nbsp;<img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                        看{{ dataType === '非农' ? '非农' : '数据' }}，到&nbsp;<img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
                         &nbsp;|&nbsp; 
                         <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span>
                     </div>
                 </div>
 
+                <div v-if="tb.desc" class="table-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.desc = $event.target.innerText" v-html="formatText(tb.desc)"></div>
+
                 <div class="glass-card table-wrapper">
-                    <div v-if="tb.desc" class="table-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.desc = $event.target.innerText" v-html="formatText(tb.desc)"></div>
-                    
                     <table class="data-table">
                         <colgroup>
                             <col v-for="(w, i) in tb.colWidths" :key="'col'+i" :style="{ width: w }">
                         </colgroup>
                         <tbody>
-                            <tr v-for="(row, rIndex) in tb.data" :key="'row'+rIndex" :class="{'table-head-row': rIndex === 0}">
-                                <td v-for="(cell, cIndex) in row" :key="'cell'+rIndex+'-'+cIndex" 
-                                    class="editable table-cell" 
-                                    :style="{ height: tb.rowHeight + 'px' }"
-                                    contenteditable="true" spellcheck="false" data-gramm="false" 
-                                    @blur="updateTableCell(rIndex, cIndex, $event)">
-                                    {{ cell }}
+                            <tr v-for="(row, rIndex) in tb.data" :key="'row'+rIndex">
+                                <td v-for="(cell, cIndex) in row" v-if="!cell.hide" :key="'cell'+rIndex+'-'+cIndex" 
+                                    class="table-cell" 
+                                    :colspan="cell.colspan" :rowspan="cell.rowspan"
+                                    :class="{
+                                        'bg-theme': cell.bg === 'theme',
+                                        'bg-gray': cell.bg === 'gray',
+                                        'selected-cell': selectedCell && selectedCell.r === rIndex && selectedCell.c === cIndex
+                                    }"
+                                    :style="{ fontWeight: cell.bold ? 'bold' : 'normal', height: tb.rowHeight + 'px' }"
+                                    @click.stop="selectTbCell(rIndex, cIndex)">
+                                    
+                                    <div class="table-cell-content editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="updateTbCellText(rIndex, cIndex, $event)">{{ cell.text }}</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -429,10 +452,10 @@
                         <img src="icon.svg" style="height: 24px;" alt="" onerror="this.style.display='none'">
                         JIN10.COM
                     </div>
-                    <div class="slogan">看{{ dataType }}，到金十，立即下载金十数据APP>></div>
+                    <div class="slogan">看{{ dataType === '非农' ? '非农' : '数据' }}，到金十，立即下载金十数据APP>></div>
                 </div>
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <img :src="qrCodeUrl" class="qr-code" alt="QR" @click="triggerQrUpload" title="点击更换二维码">
+                    <img :src="qrCodeUrl" class="qr-code" alt="QR" @click.stop="triggerQrUpload" title="点击更换二维码">
                 </div>
             </div>
             <div v-else style="height: 40px;"></div>
@@ -441,11 +464,28 @@
 </div>
 
 <script>
+    // 初始化默认表格对象的构建函数，返回带有属性的对象结构
+    function createInitialTableData() {
+        const raw = [
+            ['指标名称', '2026 Q1 预期', '2026 Q2 预期'],
+            ['美国 CPI 同比', '3.1%', '2.8%'],
+            ['美国 核心 PCE', '2.5%', '2.3%'],
+            ['新增非农 (万人)', '18.5', '15.0'],
+            ['失业率', '3.9%', '4.0%'],
+            ['联邦基金利率', '4.50%', '4.25%']
+        ];
+        return raw.map((row, rIdx) => 
+            row.map((text) => ({ 
+                text: text, bold: rIdx === 0, bg: rIdx === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false 
+            }))
+        );
+    }
+
     new Vue({
         el: '#app',
         data: {
             theme: 'default', 
-            mode: 'table', // 默认展示最新的表格模式
+            mode: 'table', 
             dataType: 'CPI',
             date: '2026-04-10',
             showWatermark: true,
@@ -458,24 +498,18 @@
             ac: {
                 title: '美国3月CPI数据', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
             },
-            // 💡 新增：表格模式核心数据模型
             tb: {
-                title: '2026年全球宏观经济指标预测',
-                desc: '以下数据基于各大投行最新发布的季度报告汇总，反映了市场对未来通胀、就业及经济增长的核心预期。点击单元格即可直接修改数据。',
+                title: '全球宏观经济指标预测',
+                desc: '以下数据基于各大投行最新发布的季度报告汇总，反映了市场对未来通胀、就业及经济增长的核心预期。点击单元格可以直接修改内容。',
                 rows: 6,
                 cols: 3,
-                colWidthsStr: '30 35 35', // 用户输入的比例字符串
-                colWidths: ['30%', '35%', '35%'], // 映射到 CSS 的数组
-                rowHeight: 45, // 默认单元格最小行高
-                data: [
-                    ['指标名称', '2026 Q1 预期', '2026 Q2 预期'],
-                    ['美国 CPI 同比', '3.1%', '2.8%'],
-                    ['美国 核心 PCE', '2.5%', '2.3%'],
-                    ['新增非农 (万人)', '18.5', '15.0'],
-                    ['失业率', '3.9%', '4.0%'],
-                    ['联邦基金利率', '4.50%', '4.25%']
-                ]
+                colWidthsStr: '30 35 35', 
+                colWidths: ['30%', '35%', '35%'], 
+                rowHeight: 45, 
+                data: createInitialTableData()
             },
+            selectedCell: null,
+            excelPaste: '',
             savedMessage: '',
             isInitializing: true 
         },
@@ -489,13 +523,13 @@
                             theme: this.theme, mode: this.mode, dataType: this.dataType,
                             date: this.date, showWatermark: this.showWatermark,
                             showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                            ex: this.ex, ac: this.ac, tb: this.tb // 增加表格对象的监听缓存
+                            ex: this.ex, ac: this.ac, tb: this.tb
                         }
                     },
                     function(newVal) {
                         try {
                             localStorage.setItem('jin10_poster_draft', JSON.stringify(newVal));
-                            this.savedMessage = '✓ 已自动保存草稿';
+                            this.savedMessage = '✓ 已自动保存';
                             setTimeout(() => { this.savedMessage = ''; }, 2000);
                         } catch (e) {
                             console.warn('本地存储失败', e);
@@ -504,24 +538,23 @@
                     { deep: true }
                 );
             }, 100);
+            
+            // 点击空白处取消单元格选中
+            document.addEventListener('click', this.handleGlobalClick);
+        },
+        beforeDestroy() {
+            document.removeEventListener('click', this.handleGlobalClick);
         },
         watch: {
             dataType(newVal, oldVal) {
                 if (this.isInitializing) return; 
-                
-                // 仅替换预期和公布的主标题中的 CPI/非农
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
                 if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
                 
-                // 表格标题也稍微智能联动一下
-                if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
-                
                 if (newVal === '非农') {
-                    this.ex.mainData = '25万';
-                    this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
+                    this.ex.mainData = '25万'; this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
                     this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
-                    
                     this.ac.title = '美国3月非农数据';
                     this.ac.s1Title = '季调后非农就业人口'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
                     this.ac.s2Title = '失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
@@ -529,10 +562,8 @@
                     this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
                 } 
                 else if (newVal === 'CPI') {
-                    this.ex.mainData = '3.3%';
-                    this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
+                    this.ex.mainData = '3.3%'; this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
                     this.ex.rightTopData = '2.7%'; this.ex.rightBottomData = '0.9%';
-                    
                     this.ac.title = '美国3月CPI数据';
                     this.ac.s1Title = '未季调CPI年率'; this.ac.s1Value = '3.3%'; this.ac.s1Desc = '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。其中，汽油价格创纪录上涨。';
                     this.ac.s2Title = '核心CPI年率'; this.ac.s2Value = '2.6%'; this.ac.s2Status = 'low'; this.ac.s2Desc = '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。';
@@ -542,54 +573,179 @@
             }
         },
         methods: {
-            // 💡 表格核心：更改行数/列数
+            // ======== 表格互动核心逻辑 ========
+            selectTbCell(r, c) {
+                this.selectedCell = { r, c };
+            },
+            handleCanvasClick(e) {
+                // 点击画板其他地方取消选中单元格
+                if (!e.target.closest('.table-cell')) {
+                    this.selectedCell = null;
+                }
+            },
+            handleGlobalClick(e) {
+                // 如果点击的地方不是左侧控制栏也不是画板里的单元格，取消选中
+                if (!e.target.closest('.sidebar') && !e.target.closest('.table-cell')) {
+                    this.selectedCell = null;
+                }
+            },
+            updateTbCellText(r, c, event) {
+                let row = [...this.tb.data[r]];
+                row[c].text = event.target.innerText;
+                this.$set(this.tb.data, r, row);
+            },
             changeTbSize(type, delta) {
                 if (type === 'row') {
-                    const newRows = this.tb.rows + delta;
+                    let newRows = this.tb.rows + delta;
                     if (newRows < 1) return;
                     this.tb.rows = newRows;
                     if (delta > 0) {
-                        this.tb.data.push(new Array(this.tb.cols).fill('-')); // 加行，填入占位符
+                        // 新增空行
+                        let newRow = new Array(this.tb.cols).fill(null).map(()=>({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false }));
+                        this.tb.data.push(newRow);
                     } else {
-                        this.tb.data.pop(); // 减行
+                        this.tb.data.pop();
                     }
                 } else if (type === 'col') {
-                    const newCols = this.tb.cols + delta;
+                    let newCols = this.tb.cols + delta;
                     if (newCols < 1) return;
                     this.tb.cols = newCols;
                     this.tb.data.forEach(row => {
-                        if (delta > 0) row.push('-'); // 每行尾部加一格
-                        else row.pop(); // 每行尾部减一格
+                        if (delta > 0) row.push({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
+                        else row.pop();
                     });
-                    
-                    // 自动平分新的列宽
                     const w = Math.floor(100 / newCols);
                     this.tb.colWidthsStr = new Array(newCols).fill(w).join(' ');
                     this.updateColWidths();
                 }
+                this.selectedCell = null;
             },
-            // 💡 表格核心：更新列宽比例
             updateColWidths() {
                 let widths = this.tb.colWidthsStr.trim().split(/\s+/);
-                this.tb.colWidths = widths.map(w => w + '%');
+                this.tb.colWidths = widths.map(w => w.includes('%') ? w : w + '%');
             },
-            // 💡 表格核心：画板上直接修改单元格内容时的同步方法
-            updateTableCell(rIndex, cIndex, event) {
-                let newRow = [...this.tb.data[rIndex]];
-                newRow[cIndex] = event.target.innerText;
-                // Vue 2 必须使用 $set 来更新数组内的深层数据，保证响应式和本地保存触发
-                this.$set(this.tb.data, rIndex, newRow);
+            toggleCellProp(prop) {
+                if(!this.selectedCell) return;
+                let {r, c} = this.selectedCell;
+                let row = [...this.tb.data[r]];
+                row[c][prop] = !row[c][prop];
+                this.$set(this.tb.data, r, row);
             },
-            
+            setCellBg(val) {
+                if(!this.selectedCell) return;
+                let {r, c} = this.selectedCell;
+                let row = [...this.tb.data[r]];
+                row[c].bg = val;
+                this.$set(this.tb.data, r, row);
+            },
+            mergeCell(direction) {
+                if(!this.selectedCell) return;
+                let {r, c} = this.selectedCell;
+                let cell = this.tb.data[r][c];
+                
+                if (direction === 'right') {
+                    let targetC = c + cell.colspan;
+                    if (targetC < this.tb.cols) {
+                        let target = this.tb.data[r][targetC];
+                        if (!target.hide && target.rowspan === cell.rowspan) {
+                            let targetRow = [...this.tb.data[r]];
+                            targetRow[targetC].hide = true;
+                            targetRow[c].colspan += target.colspan;
+                            this.$set(this.tb.data, r, targetRow);
+                        } else {
+                            alert("无法合并：右侧单元格已被合并或行高不一致！");
+                        }
+                    }
+                } else if (direction === 'down') {
+                    let targetR = r + cell.rowspan;
+                    if (targetR < this.tb.rows) {
+                        let target = this.tb.data[targetR][c];
+                        if (!target.hide && target.colspan === cell.colspan) {
+                            let targetRow = [...this.tb.data[targetR]];
+                            targetRow[c].hide = true;
+                            this.$set(this.tb.data, targetR, targetRow);
+                            
+                            let sourceRow = [...this.tb.data[r]];
+                            sourceRow[c].rowspan += target.rowspan;
+                            this.$set(this.tb.data, r, sourceRow);
+                        } else {
+                            alert("无法合并：下方单元格已被合并或列宽不一致！");
+                        }
+                    }
+                }
+            },
+            unmergeCell() {
+                if(!this.selectedCell) return;
+                let {r, c} = this.selectedCell;
+                let cell = this.tb.data[r][c];
+                
+                for(let i=0; i<cell.rowspan; i++) {
+                    let targetRow = [...this.tb.data[r+i]];
+                    for(let j=0; j<cell.colspan; j++) {
+                        if(i===0 && j===0) continue;
+                        targetRow[c+j].hide = false;
+                        targetRow[c+j].colspan = 1;
+                        targetRow[c+j].rowspan = 1;
+                    }
+                    this.$set(this.tb.data, r+i, targetRow);
+                }
+                let sourceRow = [...this.tb.data[r]];
+                sourceRow[c].colspan = 1;
+                sourceRow[c].rowspan = 1;
+                this.$set(this.tb.data, r, sourceRow);
+            },
+            importExcel() {
+                if (!this.excelPaste) return;
+                const rows = this.excelPaste.trim().split('\n');
+                if(rows.length === 0) return;
+                let maxCols = 0;
+                
+                const newData = rows.map((row, r) => {
+                    const cols = row.split('\t');
+                    maxCols = Math.max(maxCols, cols.length);
+                    return cols.map((text, c) => ({
+                        text: text.trim(),
+                        bold: r === 0, // 自动加粗表头
+                        bg: r === 0 ? 'theme' : '', // 自动上色表头
+                        colspan: 1, rowspan: 1, hide: false
+                    }));
+                });
+                
+                // 补齐长短不一的行
+                newData.forEach(row => {
+                    while (row.length < maxCols) {
+                        row.push({ text: '', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
+                    }
+                });
+                
+                this.tb.rows = newData.length;
+                this.tb.cols = maxCols;
+                this.tb.data = newData;
+                
+                // 自动平分列宽
+                const w = Math.floor(100 / maxCols);
+                this.tb.colWidthsStr = new Array(maxCols).fill(w).join(' ');
+                this.updateColWidths();
+                
+                this.excelPaste = '';
+                this.selectedCell = null;
+                alert("✅ Excel 表格解析成功！");
+            },
+
+            // ======== 基础逻辑 ========
             loadData() {
                 const saved = localStorage.getItem('jin10_poster_draft');
                 if (saved) {
                     try {
-                        const parsed = JSON.parse(saved);
+                        let parsed = JSON.parse(saved);
+                        // 数据结构平滑升级兼容旧版本表格数组
+                        if (parsed.tb && parsed.tb.data && parsed.tb.data[0] && typeof parsed.tb.data[0][0] === 'string') {
+                            parsed.tb.data = parsed.tb.data.map((row, r) => row.map(text => ({
+                                text: text, bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false
+                            })));
+                        }
                         Object.assign(this.$data, parsed);
-                    } catch(e) {
-                        console.error('加载缓存草稿失败', e);
-                    }
+                    } catch(e) { console.error('加载缓存失败', e); }
                 }
             },
             triggerQrUpload() {
@@ -635,45 +791,43 @@
                 return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期');
             },
             exportImage() {
-                const element = document.getElementById('poster');
-                const targetWidth = 1242;
-                const originalWidth = element.offsetWidth; 
-                const scale = targetWidth / originalWidth;
-
-                const options = {
-                    scale: scale, 
-                    useCORS: true, 
-                    backgroundColor: null,
-                    logging: false,
-                    ignoreElements: (node) => {
-                        if (node.tagName && node.tagName.toLowerCase().includes('grammarly')) return true;
-                        if (node.className && typeof node.className === 'string' && node.className.includes('grammarly')) return true;
-                        if (node.hasAttribute && node.hasAttribute('data-grammarly-shadow-root')) return true;
-                        return false;
-                    }
-                };
-
-                const btn = document.querySelector('.btn-export');
-                const originalText = btn.innerText;
-                btn.innerText = '正在生成 高清大图...';
-
-                let prefixMap = { 'expect': '预期', 'actual': '数据公布', 'table': '图表' };
+                this.selectedCell = null; // 导出前必须清除选中框
                 
-                html2canvas(element, options).then(canvas => {
-                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                    const link = document.createElement('a');
-                    link.download = `金十_${this.dataType}_${prefixMap[this.mode]}_${this.date}.jpg`;
-                    link.href = imgData;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                setTimeout(() => {
+                    const element = document.getElementById('poster');
+                    const targetWidth = 1242;
+                    const scale = targetWidth / element.offsetWidth;
+
+                    const options = {
+                        scale: scale, useCORS: true, backgroundColor: null, logging: false,
+                        ignoreElements: (node) => {
+                            if (node.tagName && node.tagName.toLowerCase().includes('grammarly')) return true;
+                            if (node.className && typeof node.className === 'string' && node.className.includes('grammarly')) return true;
+                            if (node.hasAttribute && node.hasAttribute('data-grammarly-shadow-root')) return true;
+                            return false;
+                        }
+                    };
+
+                    const btn = document.querySelector('.btn-export');
+                    const originalText = btn.innerText;
+                    btn.innerText = '正在生成 高清大图...';
+
+                    let prefixMap = { 'expect': '预期', 'actual': '数据公布', 'table': '前瞻图表' };
                     
-                    btn.innerText = originalText;
-                }).catch(err => {
-                    alert('导出失败，请尝试在本地环境(Live Server)运行。');
-                    console.error(err);
-                    btn.innerText = originalText;
-                });
+                    html2canvas(element, options).then(canvas => {
+                        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                        const link = document.createElement('a');
+                        link.download = `金十_${this.dataType}_${prefixMap[this.mode]}_${this.date}.jpg`;
+                        link.href = imgData;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        btn.innerText = originalText;
+                    }).catch(err => {
+                        alert('导出失败，请尝试在本地环境(Live Server)运行。');
+                        btn.innerText = originalText;
+                    });
+                }, 50);
             }
         }
     });
