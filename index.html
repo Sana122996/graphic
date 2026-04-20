@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (细节臻享版)</title>
+    <title>数据长图生成器 (细节打磨终极版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -89,13 +89,18 @@
         
         .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
-        .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
+        
+        /* 💡 修复：把文字变得干净，防止各种奇怪的间距 */
+        .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; white-space: nowrap;}
+        
+        /* 💡 新增：表格描述为空时的占位符样式 */
+        .empty-placeholder { min-height: 24px; display: block; }
+        .empty-placeholder:empty::before { content: '✏️ 点击此处添加描述语 (导出截图时会自动隐藏此行)'; color: #bbb; cursor: text; }
 
         /* ==================== 公共模式 A 背景 ==================== */
         .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
         .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
         
-        /* 💡 修复：预期图头部线条颜色统一，不再随纯白文字亮瞎眼 */
         .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150, 150, 150, 0.3); padding-bottom: 20px;}
         .mode-expect .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
         .mode-expect .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
@@ -311,46 +316,56 @@
             
             <div v-if="mode === 'expect'" class="mode-expect">
                 <div class="header-box">
-                    <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
+                    <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
-                        <div class="header-meta"><span class="prefix-text">看{{ dataType }}，到&nbsp;</span><img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'"></div>
-                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
+                        <div class="header-meta">
+                            <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ex.prefix = $event.target.innerText.trim()">{{ ex.prefix }}</span>&nbsp;
+                            <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
                     </div>
                 </div>
 
                 <div class="bento-grid">
                     <div class="glass-card card-large">
                         <div style="flex-shrink: 0; min-width: 150px; text-align: center;">
-                            <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
+                            <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
                         </div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
                     </div>
                     <div class="glass-card card-tall">
-                        <h3 class="card-title editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.leftTitle = $event.target.innerText">{{ ex.leftTitle }}</h3>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
+                        <h3 class="card-title editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ex.leftTitle = $event.target.innerText">{{ ex.leftTitle }}</h3>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
                     </div>
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @paste="onPastePlain" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" @paste="onPastePlain" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
                     </div>
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @paste="onPastePlain" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" @paste="onPastePlain" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
                     </div>
                 </div>
             </div>
 
             <div v-if="mode === 'table'" class="mode-table">
                 <div class="header-box-centered">
-                    <h1 class="title-bento editable centered-title" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
+                    <h1 class="title-bento editable centered-title" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
                     <div class="meta-centered">
-                        看{{ dataType === '非农' ? '非农' : '数据' }}，到&nbsp;<img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                        <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="tb.prefix = $event.target.innerText.trim()">{{ tb.prefix }}</span>&nbsp;
+                        <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
                         &nbsp;|&nbsp; 
-                        <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span>
+                        <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span>
                     </div>
                 </div>
 
-                <div v-if="tb.desc" class="table-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.desc = $event.target.innerText" v-html="formatText(tb.desc)"></div>
+                <div v-show="tb.desc || !isExporting" 
+                     class="table-desc editable" 
+                     :class="{'empty-placeholder': !tb.desc}"
+                     contenteditable="true" spellcheck="false" data-gramm="false" 
+                     @paste="onPastePlain" @blur="tb.desc = $event.target.innerText.trim()" 
+                     v-html="tb.desc ? formatText(tb.desc) : ''">
+                </div>
 
                 <div class="glass-card table-wrapper">
                     <table class="data-table">
@@ -370,7 +385,7 @@
                                     :style="{ fontWeight: cell.bold ? 'bold' : 'normal', height: tb.rowHeight + 'px' }"
                                     @click.stop="selectTbCell(rIndex, cIndex)">
                                     
-                                    <div class="table-cell-content editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="updateTbCellText(rIndex, cIndex, $event)">{{ cell.text }}</div>
+                                    <div class="table-cell-content editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="updateTbCellText(rIndex, cIndex, $event)">{{ cell.text }}</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -380,38 +395,39 @@
 
             <div v-if="mode === 'actual'">
                 <div class="header-box">
-                    <div class="date-box-left editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
+                    <div class="date-box-left editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
                         <span class="date-year">{{ date.split('-')[0] }}</span>
                         <span class="date-md">{{ date.split('-')[1] }}-{{ date.split('-')[2] }}</span>
                     </div>
                     <div class="title-right-wrapper">
-                        <h1 class="main-title editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
+                        <h1 class="main-title editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
                         <div class="sub-meta">
-                            <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
-                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
+                            <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.prefix = $event.target.innerText.trim()">{{ ac.prefix }}</span>&nbsp;
+                            <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
+                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="data-section">
-                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
+                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
                     <div class="sec1-body">
                         <div class="data-col-01">
                             <div class="val-badge">
                                 <span class="val-lbl">公布值</span>
                                 <span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</span>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="grid-2col">
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -419,15 +435,15 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s2Status')" :class="ac.s2Status" title="点击循环切换状态">{{ getStatusText(ac.s2Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s2Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s2Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
                     </div>
                     
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -435,17 +451,17 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s3Status')" :class="ac.s3Status" title="点击循环切换状态">{{ getStatusText(ac.s3Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s3Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s3Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="banner-box">
-                    <div class="banner-left editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
-                    <div class="banner-right editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
+                    <div class="banner-left editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
+                    <div class="banner-right editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
                 </div>
             </div>
 
@@ -496,13 +512,13 @@
             qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
             
             ex: {
-                title: '美国3月CPI预期', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
+                title: '美国3月CPI预期', prefix: '看CPI，到', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
             },
             ac: {
-                title: '美国3月CPI数据', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
+                title: '美国3月CPI数据', prefix: '看CPI，到', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
             },
             tb: {
-                title: '全球宏观经济指标预测',
+                title: '全球宏观经济指标预测', prefix: '看数据，到',
                 desc: '以下数据基于各大投行最新发布的季度报告汇总，反映了市场对未来通胀、就业及经济增长的核心预期。点击单元格可以直接修改内容。',
                 rows: 6,
                 cols: 3,
@@ -514,7 +530,8 @@
             selectedCell: null,
             excelPaste: '',
             savedMessage: '',
-            isInitializing: true 
+            isInitializing: true,
+            isExporting: false // 💡 新增：用于在截图瞬间隐藏空白占位符
         },
         mounted() {
             this.loadData();
@@ -558,6 +575,7 @@
                 if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
                 
                 if (newVal === '非农') {
+                    this.ex.prefix = '看非农，到'; this.ac.prefix = '看非农，到'; this.tb.prefix = '看非农，到';
                     this.ex.mainData = '25万'; this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
                     this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
                     this.ac.title = '美国3月非农数据';
@@ -567,6 +585,7 @@
                     this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
                 } 
                 else if (newVal === 'CPI') {
+                    this.ex.prefix = '看CPI，到'; this.ac.prefix = '看CPI，到'; this.tb.prefix = '看数据，到';
                     this.ex.mainData = '3.3%'; this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
                     this.ex.rightTopData = '2.7%'; this.ex.rightBottomData = '0.9%';
                     this.ac.title = '美国3月CPI数据';
@@ -578,6 +597,11 @@
             }
         },
         methods: {
+            onPastePlain(e) {
+                e.preventDefault();
+                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            },
             selectTbCell(r, c) { this.selectedCell = { r, c }; },
             handleCanvasClick(e) { if (!e.target.closest('.table-cell')) this.selectedCell = null; },
             handleGlobalClick(e) { if (!e.target.closest('.sidebar') && !e.target.closest('.table-cell')) this.selectedCell = null; },
@@ -722,6 +746,12 @@
                     try {
                         let parsed = JSON.parse(saved);
                         if (parsed.titleFontSize === undefined) parsed.titleFontSize = 50; 
+                        
+                        // 兼容加载前缀数据
+                        if (parsed.ex && parsed.ex.prefix === undefined) parsed.ex.prefix = this.dataType === '非农' ? '看非农，到' : '看CPI，到';
+                        if (parsed.ac && parsed.ac.prefix === undefined) parsed.ac.prefix = this.dataType === '非农' ? '看非农，到' : '看CPI，到';
+                        if (parsed.tb && parsed.tb.prefix === undefined) parsed.tb.prefix = this.dataType === '非农' ? '看非农，到' : '看数据，到';
+
                         if (parsed.tb && parsed.tb.data && parsed.tb.data[0] && typeof parsed.tb.data[0][0] === 'string') {
                             parsed.tb.data = parsed.tb.data.map((row, r) => row.map(text => ({
                                 text: text, bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false
@@ -771,6 +801,7 @@
             },
             exportImage() {
                 this.selectedCell = null; 
+                this.isExporting = true; // 💡 触发：截图时自动隐藏空的占位符
                 
                 setTimeout(() => {
                     const element = document.getElementById('poster');
@@ -801,13 +832,16 @@
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
+                        
                         btn.innerText = originalText;
+                        this.isExporting = false; // 💡 恢复
                     }).catch(err => {
                         alert('导出失败，请尝试在本地环境(Live Server)运行。');
                         console.error(err);
                         btn.innerText = originalText;
+                        this.isExporting = false; // 💡 恢复
                     });
-                }, 50);
+                }, 100); // 留出一点时间让 Vue 将占位符隐藏
             }
         }
     });
