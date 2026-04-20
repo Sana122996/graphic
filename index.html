@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (细节打磨终极版)</title>
+    <title>数据长图生成器 (智能联动终极版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -60,7 +60,6 @@
         .btn-export { background: #4A90E2; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 24px; width: 100%;}
         .btn-export:hover { background: #357ABD; }
         
-        /* 画布直编状态样式 */
         .editable { transition: all 0.2s; border-radius: 4px; border: 1px solid transparent; }
         .editable:hover { box-shadow: 0 0 0 1px rgba(74, 144, 226, 0.5); cursor: text; }
         .editable:focus { outline: none; box-shadow: 0 0 0 2px #4A90E2; background: rgba(255,255,255,0.2); }
@@ -130,15 +129,20 @@
         .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
         .mode-b .sec-num { background: var(--b-accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold;}
         
-        .mode-b .sec1-body { display: flex; padding: 25px 20px; align-items: center; gap: 20px; }
-        .mode-b .val-box-inner { background: var(--b-val-bg); padding: 10px 15px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); transition: background 0.3s;}
-        .mode-b .val-lbl { font-size: 18px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
+        /* 核心修复 1：01 板块并排排列优化，腾出解读空间 */
+        .mode-b .sec1-body { display: flex; padding: 25px 20px; align-items: center; gap: 25px; }
+        .mode-b .data-col-01 { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; min-width: 170px;}
         
-        /* 核心修复：缩小状态标签字体，强制不换行 */
+        .mode-b .val-badge { 
+            background: var(--b-val-bg); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); 
+            display: flex; align-items: center; gap: 10px; margin-bottom: 6px; transition: background 0.3s;
+        }
+        .mode-b .val-badge .val-lbl { font-size: 15px; font-weight: bold; color: var(--b-val-lbl); margin: 0; transition: color 0.3s;}
+        
         .mode-b .status-tag { 
             display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; 
             color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s;
-            white-space: nowrap; /* 绝对不换行 */
+            white-space: nowrap; 
         }
         .mode-b .status-tag.low { color: #27AE60; opacity: 1; }
         .mode-b .status-tag.high { color: var(--num-color); opacity: 1; }
@@ -148,27 +152,29 @@
         .mode-b .sec-unit { font-size: 32px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
         .mode-b .sec-desc { font-size: 15px; line-height: 1.6; color: var(--b-text); opacity: 0.85; flex: 1; text-align: justify;}
 
+        /* 02、03板块依然保持稳定结构，去除截图方块Bug */
         .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; margin-bottom: 20px;}
         .mode-b .sec-small { background: var(--b-card); padding: 20px; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec-small-head { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(150,150,150,0.2);}
         
         .mode-b .sec-small-body { display: flex; gap: 15px; align-items: center; margin-bottom: 15px;}
-        .mode-b .sec-small-body .val-box-inner { padding: 6px 10px; } /* 微调内边距防挤压 */
-        .mode-b .sec-small-body .status-tag { font-size: 11px; } /* 副模块状态字体进一步微调 */
+        .mode-b .val-box-inner { background: var(--b-val-bg); padding: 6px 10px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); transition: background 0.3s;}
+        .mode-b .val-box-inner .val-lbl { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
+        
+        .mode-b .sec-small-body .status-tag { font-size: 11px; }
         .mode-b .sec-small-body .sec-value { font-size: 58px; }
         .mode-b .sec-small-body .sec-unit { font-size: 26px; }
 
-        /* 核心修复：Banner 横幅圆角拼接 */
         .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 30px;}
         .mode-b .banner-left { 
             background: var(--b-date-bg); color: white; padding: 20px; width: 170px; 
             display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center;
-            border-radius: 8px 0 0 8px; /* 左边矩形的左侧有圆角，右侧无圆角 */
+            border-radius: 8px 0 0 8px;
         }
         .mode-b .banner-right { 
             background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; 
             line-height: 1.7; text-align: justify; opacity: 0.95;
-            border-radius: 0 8px 8px 0; /* 右边矩形的右侧有圆角，左侧无圆角 */
+            border-radius: 0 8px 8px 0;
         }
 
         .checkbox-label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #555; }
@@ -181,9 +187,10 @@
         <h2>长图生成器</h2>
         
         <div style="background: #E8F0FE; color: #1967D2; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; line-height: 1.5;">
-            💡 <strong>画布直编功能：</strong><br>
-            1. 鼠标点击图片上的标题、数值或正文，即可**直接输入修改**。<br>
-            2. 点击【符合预期/高于预期...】的标签，即可**循环切换状态**。
+            💡 <strong>智能与便捷：</strong><br>
+            1. 切换 CPI/非农，右侧<strong>所有标题自动匹配</strong>！<br>
+            2. 画布直编：点击图片文本即可修改，点击标签切换状态。<br>
+            3. 已修复截图 Bug，请放心导出高清图。
         </div>
 
         <div class="form-group">
@@ -207,7 +214,7 @@
         </div>
 
         <div class="form-group">
-            <label>📊 2. 选择数据类型 (智能联动标题)</label>
+            <label>📊 2. 选择数据类型 (标题智能联动)</label>
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: dataType === 'CPI'}" @click="dataType = 'CPI'">CPI 数据</div>
                 <div class="radio-btn" :class="{active: dataType === '非农'}" @click="dataType = '非农'">非农 数据</div>
@@ -241,7 +248,7 @@
 
         <div v-if="mode === 'actual'">
             <div class="form-group"><label>主标题</label><input type="text" v-model="ac.title"></div>
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 请直接在右侧画布上点击数字和文案进行修改 👇</p>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 切换类型后，标题已联动更新。文案请直接点击右侧画布修改 👇</p>
         </div>
 
         <div class="form-group" v-if="showQRCode">
@@ -311,15 +318,16 @@
                 <div class="data-section">
                     <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s1Title }}</span></div>
                     <div class="sec1-body">
-                        <div class="val-box">
-                            <div class="val-box-inner">
-                                <div class="val-lbl">公布值</div>
-                                <div class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</div>
+                        <div class="data-col-01">
+                            <div class="val-badge">
+                                <span class="val-lbl">公布值</span>
+                                <span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</span>
+                            </div>
+                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                                <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="num-col editable" contenteditable="true" spellcheck="false">
-                            <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
-                        </div>
+                        
                         <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s1Desc)"></div>
                     </div>
                 </div>
@@ -385,7 +393,7 @@
     new Vue({
         el: '#app',
         data: {
-            theme: 'red', 
+            theme: 'default', 
             mode: 'actual', 
             dataType: 'CPI',
             date: '2026-04-10',
@@ -398,7 +406,7 @@
             },
             ac: {
                 title: '美国3月CPI数据', 
-                s1Title: '美国3月未季调CPI年率', 
+                s1Title: '未季调CPI年率', 
                 s1Value: '3.3%', 
                 s1Status: 'match', 
                 s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', 
@@ -415,6 +423,7 @@
             }
         },
         watch: {
+            // 核心修复 2：监听 dataType，智能替换所有小标题和默认值
             dataType(newVal, oldVal) {
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
@@ -426,11 +435,25 @@
                     this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
                     
                     this.ac.title = '美国3月非农数据';
-                    this.ac.s1Title = '美国3月非农就业人数季调后'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
-                    this.ac.s2Title = '美国3月失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
-                    this.ac.s3Title = '美国平均时薪同比'; this.ac.s3Value = '4.1%'; this.ac.s3Status = 'low'; this.ac.s3Desc = '同比率录得4.1%，符合预期。';
+                    // 替换非农标题与数值
+                    this.ac.s1Title = '季调后非农就业人口'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
+                    this.ac.s2Title = '失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
+                    this.ac.s3Title = '平均时薪月率'; this.ac.s3Value = '0.3%'; this.ac.s3Status = 'match'; this.ac.s3Desc = '录得0.3%，符合预期。';
                     
                     this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
+                } 
+                else if (newVal === 'CPI') {
+                    this.ex.mainData = '3.3%';
+                    this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
+                    this.ex.rightTopData = '2.7%'; this.ex.rightBottomData = '0.9%';
+                    
+                    this.ac.title = '美国3月CPI数据';
+                    // 替换回CPI标题与数值
+                    this.ac.s1Title = '未季调CPI年率'; this.ac.s1Value = '3.3%'; this.ac.s1Desc = '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。其中，汽油价格创纪录上涨。';
+                    this.ac.s2Title = '核心CPI年率'; this.ac.s2Value = '2.6%'; this.ac.s2Status = 'low'; this.ac.s2Desc = '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。';
+                    this.ac.s3Title = '核心CPI月率'; this.ac.s3Value = '0.2%'; this.ac.s3Status = 'low'; this.ac.s3Desc = '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。';
+                    
+                    this.ac.bannerTitle = '3月CPI<br>“患上高烧”'; this.ac.bannerDesc = '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。';
                 }
             }
         },
