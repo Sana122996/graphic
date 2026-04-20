@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (Excel联动旗舰版)</title>
+    <title>数据长图生成器 (细节臻享版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -81,11 +81,12 @@
         .theme-dark .watermark-logo { filter: brightness(0) invert(1); opacity: 0.04; }
 
         .poster { width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s;}
-        .title-bento, .main-title { font-family: 'Noto Serif SC', serif !important; font-weight: 900; margin: 0; letter-spacing: 1px; }
+        .title-bento, .main-title { font-family: 'Noto Serif SC', serif !important; font-weight: 900; margin: 0; letter-spacing: 1px; transition: font-size 0.2s; }
         
         .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; position: relative; z-index: 2; min-height: 80px; }
         .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
         .footer-left .slogan { font-size: 16px; color: var(--text-main); }
+        
         .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
@@ -94,12 +95,12 @@
         .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
         .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
         
-        /* 预期图头部 */
-        .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid var(--text-main); padding-bottom: 20px;}
+        /* 💡 修复：预期图头部线条颜色统一，不再随纯白文字亮瞎眼 */
+        .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150, 150, 150, 0.3); padding-bottom: 20px;}
         .mode-expect .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
         .mode-expect .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
         .mode-expect .header-logo { height: 28px; margin-left: 8px; object-fit: contain; }
-        .mode-expect .title-bento { font-size: 44px; color: var(--text-main);}
+        .mode-expect .title-bento { color: var(--text-main); line-height: 1.1;}
         .mode-expect .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
         .mode-expect .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
         .mode-expect .card-tall { grid-row: span 2; }
@@ -110,22 +111,18 @@
 
         /* ==================== 表格模式 特有样式 ==================== */
         .mode-table .header-box-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150,150,150,0.3); padding-bottom: 20px; text-align: center;}
-        .mode-table .centered-title { font-size: 46px; color: var(--text-main); margin-bottom: 12px; }
+        .mode-table .centered-title { color: var(--text-main); margin-bottom: 12px; line-height: 1.2;}
         .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
         .mode-table .header-logo { height: 20px; object-fit: contain; }
         
         .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; text-align: center; opacity: 0.9; }
-        /* 1. 表格铺满卡片，去除内部 padding */
         .mode-table .table-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
-        /* 隐藏表格外边框，与卡片边缘融为一体 */
         .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border-style: hidden; }
         .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; position: relative;}
         
-        /* 单元格选中状态 */
         .table-cell.selected-cell { outline: 2px solid #4A90E2; outline-offset: -2px; box-shadow: inset 0 0 15px rgba(74, 144, 226, 0.2); z-index: 10; }
         .table-cell-content { outline: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; min-height: 1.5em;}
         
-        /* 背景色类 */
         .bg-theme { background-color: rgba(var(--accent), 0.12) !important; }
         .bg-gray { background-color: rgba(0,0,0,0.04) !important; }
         .theme-dark .bg-gray { background-color: rgba(255,255,255,0.08) !important; }
@@ -137,7 +134,7 @@
         .mode-b .date-year { font-size: 20px; letter-spacing: 6px; opacity: 0.9; margin-bottom: 4px; }
         .mode-b .date-md { font-size: 38px; font-weight: 900; line-height: 1; }
         .mode-b .title-right-wrapper { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;}
-        .mode-b .main-title { font-size: 50px; color: var(--b-text); line-height: 1.1; margin-bottom: 12px; white-space: nowrap; overflow: visible;}
+        .mode-b .main-title { color: var(--b-text); line-height: 1.1; margin-bottom: 12px; white-space: nowrap; overflow: visible;}
         .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
         .mode-b .sub-meta img { height: 22px; opacity: 0.9;} 
         .mode-b .date-divider-group { font-weight: 400; font-size: 14px; opacity: 0.7; margin-left: 4px;}
@@ -167,7 +164,6 @@
         .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 30px;}
         .mode-b .banner-left { background: var(--b-date-bg); color: white; padding: 20px; width: 170px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center; border-radius: 8px 0 0 8px; }
         .mode-b .banner-right { background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; line-height: 1.7; text-align: justify; opacity: 0.95; border-radius: 0 8px 8px 0; }
-        .checkbox-label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #555; }
     </style>
 </head>
 <body>
@@ -210,10 +206,17 @@
         
         <div class="form-group">
             <label>⚙️ 3. 显示设置 & 制图日期</label>
-            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px;">
-                <label class="checkbox-label"><input type="checkbox" v-model="showWatermark"> 大水印</label>
-                <label class="checkbox-label"><input type="checkbox" v-model="showQRCode"> 底部活码</label>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 15px;">
+                <label class="checkbox-label" style="margin:0;"><input type="checkbox" v-model="showWatermark"> 大水印</label>
+                <label class="checkbox-label" style="margin:0;"><input type="checkbox" v-model="showQRCode"> 底部活码</label>
             </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; background: #fff; padding: 8px 10px; border-radius: 4px; border: 1px solid #ddd;">
+                <span style="font-size: 13px; color: #555; white-space: nowrap; font-weight: bold;">🔠 大标题字号</span>
+                <input type="range" v-model="titleFontSize" min="30" max="80" step="1" style="flex: 1; margin: 0;">
+                <span style="font-size: 13px; color: #4A90E2; width: 35px; font-weight: bold; text-align: right;">{{titleFontSize}}px</span>
+            </div>
+
             <input type="text" v-model="date" placeholder="制图日期">
         </div>
 
@@ -308,7 +311,7 @@
             
             <div v-if="mode === 'expect'" class="mode-expect">
                 <div class="header-box">
-                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
+                    <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
                         <div class="header-meta"><span class="prefix-text">看{{ dataType }}，到&nbsp;</span><img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'"></div>
                         <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
@@ -339,7 +342,7 @@
 
             <div v-if="mode === 'table'" class="mode-table">
                 <div class="header-box-centered">
-                    <h1 class="title-bento editable centered-title" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
+                    <h1 class="title-bento editable centered-title" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
                     <div class="meta-centered">
                         看{{ dataType === '非农' ? '非农' : '数据' }}，到&nbsp;<img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
                         &nbsp;|&nbsp; 
@@ -382,7 +385,7 @@
                         <span class="date-md">{{ date.split('-')[1] }}-{{ date.split('-')[2] }}</span>
                     </div>
                     <div class="title-right-wrapper">
-                        <h1 class="main-title editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
+                        <h1 class="main-title editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
                         <div class="sub-meta">
                             <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
                             <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
@@ -464,7 +467,6 @@
 </div>
 
 <script>
-    // 初始化默认表格对象的构建函数，返回带有属性的对象结构
     function createInitialTableData() {
         const raw = [
             ['指标名称', '2026 Q1 预期', '2026 Q2 预期'],
@@ -490,6 +492,7 @@
             date: '2026-04-10',
             showWatermark: true,
             showQRCode: true,
+            titleFontSize: 50, 
             qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
             
             ex: {
@@ -523,7 +526,8 @@
                             theme: this.theme, mode: this.mode, dataType: this.dataType,
                             date: this.date, showWatermark: this.showWatermark,
                             showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                            ex: this.ex, ac: this.ac, tb: this.tb
+                            titleFontSize: this.titleFontSize, 
+                            ex: this.ex, ac: this.ac, tb: this.tb 
                         }
                     },
                     function(newVal) {
@@ -539,7 +543,6 @@
                 );
             }, 100);
             
-            // 点击空白处取消单元格选中
             document.addEventListener('click', this.handleGlobalClick);
         },
         beforeDestroy() {
@@ -548,9 +551,11 @@
         watch: {
             dataType(newVal, oldVal) {
                 if (this.isInitializing) return; 
+                
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
                 if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
+                if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
                 
                 if (newVal === '非农') {
                     this.ex.mainData = '25万'; this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
@@ -573,22 +578,9 @@
             }
         },
         methods: {
-            // ======== 表格互动核心逻辑 ========
-            selectTbCell(r, c) {
-                this.selectedCell = { r, c };
-            },
-            handleCanvasClick(e) {
-                // 点击画板其他地方取消选中单元格
-                if (!e.target.closest('.table-cell')) {
-                    this.selectedCell = null;
-                }
-            },
-            handleGlobalClick(e) {
-                // 如果点击的地方不是左侧控制栏也不是画板里的单元格，取消选中
-                if (!e.target.closest('.sidebar') && !e.target.closest('.table-cell')) {
-                    this.selectedCell = null;
-                }
-            },
+            selectTbCell(r, c) { this.selectedCell = { r, c }; },
+            handleCanvasClick(e) { if (!e.target.closest('.table-cell')) this.selectedCell = null; },
+            handleGlobalClick(e) { if (!e.target.closest('.sidebar') && !e.target.closest('.table-cell')) this.selectedCell = null; },
             updateTbCellText(r, c, event) {
                 let row = [...this.tb.data[r]];
                 row[c].text = event.target.innerText;
@@ -600,7 +592,6 @@
                     if (newRows < 1) return;
                     this.tb.rows = newRows;
                     if (delta > 0) {
-                        // 新增空行
                         let newRow = new Array(this.tb.cols).fill(null).map(()=>({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false }));
                         this.tb.data.push(newRow);
                     } else {
@@ -704,25 +695,18 @@
                     const cols = row.split('\t');
                     maxCols = Math.max(maxCols, cols.length);
                     return cols.map((text, c) => ({
-                        text: text.trim(),
-                        bold: r === 0, // 自动加粗表头
-                        bg: r === 0 ? 'theme' : '', // 自动上色表头
-                        colspan: 1, rowspan: 1, hide: false
+                        text: text.trim(), bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false
                     }));
                 });
                 
-                // 补齐长短不一的行
                 newData.forEach(row => {
-                    while (row.length < maxCols) {
-                        row.push({ text: '', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
-                    }
+                    while (row.length < maxCols) row.push({ text: '', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
                 });
                 
                 this.tb.rows = newData.length;
                 this.tb.cols = maxCols;
                 this.tb.data = newData;
                 
-                // 自动平分列宽
                 const w = Math.floor(100 / maxCols);
                 this.tb.colWidthsStr = new Array(maxCols).fill(w).join(' ');
                 this.updateColWidths();
@@ -732,13 +716,12 @@
                 alert("✅ Excel 表格解析成功！");
             },
 
-            // ======== 基础逻辑 ========
             loadData() {
                 const saved = localStorage.getItem('jin10_poster_draft');
                 if (saved) {
                     try {
                         let parsed = JSON.parse(saved);
-                        // 数据结构平滑升级兼容旧版本表格数组
+                        if (parsed.titleFontSize === undefined) parsed.titleFontSize = 50; 
                         if (parsed.tb && parsed.tb.data && parsed.tb.data[0] && typeof parsed.tb.data[0][0] === 'string') {
                             parsed.tb.data = parsed.tb.data.map((row, r) => row.map(text => ({
                                 text: text, bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false
@@ -748,9 +731,7 @@
                     } catch(e) { console.error('加载缓存失败', e); }
                 }
             },
-            triggerQrUpload() {
-                this.$refs.qrInput.click();
-            },
+            triggerQrUpload() { this.$refs.qrInput.click(); },
             uploadQrCode(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -784,14 +765,12 @@
                 const match = String(val).match(/^([-\d.]+)(.*)$/);
                 return match ? { num: match[1], unit: match[2] } : { num: val, unit: '' };
             },
-            formatText(text) {
-                return text ? text.replace(/\n/g, '<br>') : '';
-            },
+            formatText(text) { return text ? text.replace(/\n/g, '<br>') : ''; },
             getStatusText(status) {
                 return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期');
             },
             exportImage() {
-                this.selectedCell = null; // 导出前必须清除选中框
+                this.selectedCell = null; 
                 
                 setTimeout(() => {
                     const element = document.getElementById('poster');
@@ -825,6 +804,7 @@
                         btn.innerText = originalText;
                     }).catch(err => {
                         alert('导出失败，请尝试在本地环境(Live Server)运行。');
+                        console.error(err);
                         btn.innerText = originalText;
                     });
                 }, 50);
