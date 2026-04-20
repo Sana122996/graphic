@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (智能联动终极版)</title>
+    <title>数据长图生成器 (自动保存版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@
         .sidebar { flex: 0 0 450px; background: white; padding: 24px; overflow-y: auto; box-shadow: 2px 0 15px rgba(0,0,0,0.08); z-index: 10; height: 100%; }
         .canvas-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 40px; overflow-y: auto; height: 100%; transition: background 0.3s; background-color: #f0f2f5; }
 
-        .sidebar h2 { margin-top: 0; font-size: 18px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar h2 { margin-top: 0; font-size: 18px; color: #333; display: flex; justify-content: flex-start; align-items: center; gap: 10px;}
         .form-group { margin-bottom: 16px; background: #f8f9fa; padding: 12px; border-radius: 6px; }
         .form-group label { display: block; font-size: 13px; color: #444; margin-bottom: 8px; font-weight: bold; }
         .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
@@ -55,7 +55,7 @@
         .radio-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
 
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 8px; }
-        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+        .file-upload-wrapper input[type=file] { display: none; } /* 隐藏原生输入框，完全由按钮控制 */
         .btn-upload { display: block; width: 100%; background: #fff; border: 1px dashed #999; color: #666; text-align: center; padding: 10px; border-radius: 4px; cursor: pointer; }
         .btn-export { background: #4A90E2; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 24px; width: 100%;}
         .btn-export:hover { background: #357ABD; }
@@ -85,7 +85,18 @@
         .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; position: relative; z-index: 2; min-height: 80px; }
         .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
         .footer-left .slogan { font-size: 16px; color: var(--text-main); }
-        .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; }
+        
+        /* 💡 新增：二维码防漏换，鼠标交互增强 */
+        .qr-code { 
+            width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; 
+            cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .qr-code:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            outline: 2px dashed #FF4D4F;
+        }
+
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
 
         /* ==================== 模式 A：预期模式 ==================== */
@@ -135,14 +146,7 @@
         .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
         
         .mode-b .sub-meta img { height: 22px; opacity: 0.9;} 
-        
-        /* 💡 新增：专门弱化竖线和日期的样式 */
-        .mode-b .date-divider-group { 
-            font-weight: 400; /* 取消加粗，竖线变细 */
-            font-size: 14px;  /* 字号调小 */
-            opacity: 0.7;     /* 增加透明度，弱化层级 */
-            margin-left: 4px;
-        }
+        .mode-b .date-divider-group { font-weight: 400; font-size: 14px; opacity: 0.7; margin-left: 4px;}
         
         .mode-b .data-section { background: var(--b-card); margin-bottom: 20px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
@@ -201,13 +205,15 @@
 
 <div id="app">
     <div class="sidebar">
-        <h2>长图生成器</h2>
-        
+        <h2>
+            长图生成器
+            <span style="font-size:12px; color:#27AE60; font-weight:normal; opacity: 0; transition: opacity 0.3s;" :style="{ opacity: savedMessage ? 1 : 0 }">{{ savedMessage }}</span>
+        </h2>
+
         <div style="background: #E8F0FE; color: #1967D2; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; line-height: 1.5;">
-            💡 <strong>智能与便捷：</strong><br>
-            1. 切换 CPI/非农，右侧<strong>所有标题自动匹配</strong>！<br>
-            2. 画布直编：点击图片文本即可修改，点击标签切换状态。<br>
-            3. 已修复截图 Bug，请放心导出高清图。
+            💡 <strong>智能保存版：</strong><br>
+            1. 内容已开启<strong>自动保存</strong>，刷新或关掉网页不丢失。<br>
+            2. <strong>快捷换码：直接点击右侧预览图中的二维码</strong>即可快速更换。
         </div>
 
         <div class="form-group">
@@ -270,10 +276,10 @@
 
         <div class="form-group qr-upload-box" v-if="showQRCode">
             <label>🔗 自定义底部二维码 <span class="blink-warning">【必换】</span></label>
-            <div class="warning-tip">⚠️ 每次出图前，请务必检查并上传最新的粉丝活码！</div>
+            <div class="warning-tip">⚠️ 每次出图前，请务必检查最新的粉丝活码！你可以直接点击右侧的二维码更换。</div>
             <div class="file-upload-wrapper">
-                <div class="btn-upload highlight-btn">👉 点击选择本地新二维码图片</div>
-                <input type="file" @change="uploadQrCode" accept="image/*">
+                <div class="btn-upload highlight-btn" @click="triggerQrUpload">👉 点击选择本地新二维码图片</div>
+                <input type="file" ref="qrInput" @change="uploadQrCode" accept="image/*">
             </div>
         </div>
 
@@ -400,7 +406,7 @@
                     <div class="slogan">看{{ dataType }}，到金十，立即下载金十数据APP>></div>
                 </div>
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <img :src="qrCodeUrl" class="qr-code" alt="QR">
+                    <img :src="qrCodeUrl" class="qr-code" alt="QR" @click="triggerQrUpload" title="点击更换二维码">
                 </div>
             </div>
             <div v-else style="height: 40px;"></div>
@@ -439,10 +445,43 @@
                 s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', 
                 bannerTitle: '3月CPI<br>“患上高烧”', 
                 bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
-            }
+            },
+            savedMessage: '',
+            isInitializing: true // 防止初次加载时触发替换逻辑
+        },
+        mounted() {
+            this.loadData();
+            // 延迟关闭初始化状态，然后开启本地自动保存监听
+            setTimeout(() => { 
+                this.isInitializing = false; 
+                
+                this.$watch(
+                    function() {
+                        // 监听所有核心状态
+                        return {
+                            theme: this.theme, mode: this.mode, dataType: this.dataType,
+                            date: this.date, showWatermark: this.showWatermark,
+                            showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
+                            ex: this.ex, ac: this.ac
+                        }
+                    },
+                    function(newVal) {
+                        try {
+                            localStorage.setItem('jin10_poster_draft', JSON.stringify(newVal));
+                            this.savedMessage = '✓ 已自动保存草稿';
+                            setTimeout(() => { this.savedMessage = ''; }, 2000);
+                        } catch (e) {
+                            console.warn('本地存储失败，可能是图片体积过大', e);
+                        }
+                    },
+                    { deep: true }
+                );
+            }, 100);
         },
         watch: {
             dataType(newVal, oldVal) {
+                if (this.isInitializing) return; // 初始化加载缓存时不触发内容重置
+                
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
                 if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
@@ -474,6 +513,48 @@
             }
         },
         methods: {
+            // 从本地存储恢复数据
+            loadData() {
+                const saved = localStorage.getItem('jin10_poster_draft');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        Object.assign(this.$data, parsed);
+                    } catch(e) {
+                        console.error('加载缓存草稿失败', e);
+                    }
+                }
+            },
+            // 点击图片触发隐藏的文件上传
+            triggerQrUpload() {
+                this.$refs.qrInput.click();
+            },
+            // 读取上传的二维码并进行智能压缩转换为Base64 (防止缓存爆满)
+            uploadQrCode(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            // 二维码不需要太高清，限制最大宽度 300px
+                            const MAX_WIDTH = 300;
+                            const scaleSize = MAX_WIDTH / img.width;
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleSize;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            // 压缩为 jpeg 格式，减小体积以便存入 localStorage
+                            this.qrCodeUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+                // 清空 input 使得重复上传同一文件也能触发
+                event.target.value = '';
+            },
             toggleStatus(field) {
                 const states = ['match', 'high', 'low'];
                 const currentIndex = states.indexOf(this.ac[field]);
@@ -490,10 +571,6 @@
             },
             getStatusText(status) {
                 return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期');
-            },
-            uploadQrCode(event) {
-                const file = event.target.files[0];
-                if (file) this.qrCodeUrl = URL.createObjectURL(file);
             },
             exportImage() {
                 const element = document.getElementById('poster');
