@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (全向自动保存版)</title>
+    <title>数据长图生成器 (全能旗舰版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -36,7 +36,7 @@
         .theme-dark.mode-a { --bg-base: #141414; --accent: 160, 174, 192; --card-bg-rgb: 30, 30, 30; --text-main: #F7FAFC; --text-sub: #E2E8F0; --border-color: rgba(255, 255, 255, 0.1); }
         .theme-dark.mode-b { --b-bg: #141414; --b-card: #1F1F1F; --b-head: #000000; --b-date-bg: #333333; --b-accent: #E67817; --b-text: #F7FAFC; --b-val-bg: #2C2C2C; --b-val-lbl: #F7FAFC; }
 
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        * { box-sizing: border-box; font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         body { margin: 0; background: #e9ecef; overflow: hidden; }
         
         #app { display: flex; width: 100vw; height: 100vh; }
@@ -47,12 +47,16 @@
         .sidebar h2 { margin-top: 0; font-size: 18px; color: #333; display: flex; justify-content: flex-start; align-items: center; gap: 10px;}
         .form-group { margin-bottom: 16px; background: #f8f9fa; padding: 12px; border-radius: 6px; }
         .form-group label { display: block; font-size: 13px; color: #444; margin-bottom: 8px; font-weight: bold; }
-        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         .form-group textarea { height: 80px; resize: vertical; }
         
         .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
         .radio-btn { padding: 6px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;}
         .radio-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
+
+        .btn-ctrl { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 10px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
+        .btn-ctrl:hover { background: #f0f0f0; border-color: #aaa;}
+        .grid-ctrl { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;}
 
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 8px; }
         .file-upload-wrapper input[type=file] { display: none; }
@@ -87,21 +91,34 @@
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
 
-        /* ==================== 模式 A：预期模式 ==================== */
+        /* ==================== 公共模式 A 背景 (供预期和表格使用) ==================== */
         .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
         .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
-        .mode-a .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid var(--text-main); padding-bottom: 20px;}
-        .mode-a .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-        .mode-a .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
-        .mode-a .header-logo { height: 28px; margin-left: 8px; object-fit: contain; }
-        .mode-a .title-bento { font-size: 44px; color: var(--text-main);}
-        .mode-a .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
-        .mode-a .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
-        .mode-a .card-tall { grid-row: span 2; }
-        .mode-a .data-value { font-size: 64px; font-weight: 900; color: var(--num-color); margin: 0; line-height: 1; text-align: center; transition: color 0.3s;}
-        .mode-a .data-unit { font-size: 28px; margin-left: 2px;}
-        .mode-a .data-desc { font-size: 16px; color: var(--text-main); line-height: 1.6; }
-        .mode-a .card-title { font-size: 22px; font-weight: bold; color: var(--text-main); margin-top: 0; margin-bottom: 16px; }
+        
+        /* 预期图头部 */
+        .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid var(--text-main); padding-bottom: 20px;}
+        .mode-expect .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .mode-expect .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
+        .mode-expect .header-logo { height: 28px; margin-left: 8px; object-fit: contain; }
+        .mode-expect .title-bento { font-size: 44px; color: var(--text-main);}
+        .mode-expect .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
+        .mode-expect .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
+        .mode-expect .card-tall { grid-row: span 2; }
+        .mode-expect .data-value { font-size: 64px; font-weight: 900; color: var(--num-color); margin: 0; line-height: 1; text-align: center; transition: color 0.3s;}
+        .mode-expect .data-unit { font-size: 28px; margin-left: 2px;}
+        .mode-expect .data-desc { font-size: 16px; color: var(--text-main); line-height: 1.6; }
+        .mode-expect .card-title { font-size: 22px; font-weight: bold; color: var(--text-main); margin-top: 0; margin-bottom: 16px; }
+
+        /* ==================== 表格模式 特有样式 ==================== */
+        .mode-table .header-box-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150,150,150,0.3); padding-bottom: 20px; text-align: center;}
+        .mode-table .centered-title { font-size: 46px; color: var(--text-main); margin-bottom: 12px; }
+        .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
+        .mode-table .header-logo { height: 20px; object-fit: contain; }
+        .mode-table .table-wrapper { padding: 30px; }
+        .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 20px; text-align: justify; opacity: 0.9; }
+        .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; }
+        .mode-table .table-head-row td { background-color: rgba(var(--accent), 0.12); font-weight: bold; font-size: 17px; }
 
         /* ==================== 模式 B：公布数据模式 ==================== */
         .poster.mode-b { padding: 40px; background-color: var(--b-bg); color: var(--b-text); }
@@ -152,12 +169,6 @@
             <span style="font-size:12px; color:#27AE60; font-weight:normal; opacity: 0; transition: opacity 0.3s;" :style="{ opacity: savedMessage ? 1 : 0 }">{{ savedMessage }}</span>
         </h2>
 
-        <div style="background: #E8F0FE; color: #1967D2; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; line-height: 1.5;">
-            💡 <strong>智能保存增强版：</strong><br>
-            1. <strong>画布直编防丢：</strong> 在画布上修改完文字，<strong>鼠标点一下旁边(失去焦点)</strong>，内容即刻自动保存！<br>
-            2. <strong>快捷换码：</strong> 直接点击右侧图片中的二维码即可更换。
-        </div>
-
         <div class="form-group">
             <label>🎨 0. 选择主题配色</label>
             <div class="radio-group">
@@ -175,11 +186,12 @@
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: mode === 'expect'}" @click="mode = 'expect'">预期模板</div>
                 <div class="radio-btn" :class="{active: mode === 'actual'}" @click="mode = 'actual'">公布模板</div>
+                <div class="radio-btn" :class="{active: mode === 'table'}" @click="mode = 'table'">表格模板 (多维)</div>
             </div>
         </div>
 
         <div class="form-group">
-            <label>📊 2. 选择数据类型 (标题智能联动)</label>
+            <label>📊 2. 选择数据类型 (联动标题)</label>
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: dataType === 'CPI'}" @click="dataType = 'CPI'">CPI 数据</div>
                 <div class="radio-btn" :class="{active: dataType === '非农'}" @click="dataType = '非农'">非农 数据</div>
@@ -190,10 +202,10 @@
             <label>⚙️ 3. 显示设置</label>
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                 <label class="checkbox-label">
-                    <input type="checkbox" v-model="showWatermark"> 显示居中大水印
+                    <input type="checkbox" v-model="showWatermark"> 显示大水印
                 </label>
                 <label class="checkbox-label">
-                    <input type="checkbox" v-model="showQRCode"> 显示底部二维码与引导语
+                    <input type="checkbox" v-model="showQRCode"> 显示底部二维码
                 </label>
             </div>
         </div>
@@ -216,6 +228,50 @@
             <p style="font-size: 13px; color: #888; text-align: center;">👇 文案请直接点击右侧画布修改 👇</p>
         </div>
 
+        <div v-if="mode === 'table'">
+            <div class="form-group"><label>主标题</label><input type="text" v-model="tb.title"></div>
+            
+            <div class="form-group">
+                <div class="grid-ctrl">
+                    <label style="margin:0;">行列控制 (动态增减)</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <div>
+                        <div style="font-size:12px; margin-bottom:6px; color:#666;">行数: {{tb.rows}}</div>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('row', -1)">- 行</button>
+                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('row', 1)">+ 行</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px; margin-bottom:6px; color:#666;">列数: {{tb.cols}}</div>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('col', -1)">- 列</button>
+                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('col', 1)">+ 列</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>列宽比例设定 (用空格隔开，对应每一列)</label>
+                <input type="text" v-model="tb.colWidthsStr" @change="updateColWidths" placeholder="例如: 30 35 35">
+                <div style="font-size: 12px; color: #888; margin-top: 4px;">当前分配: {{ tb.colWidthsStr }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>单元格最小行高 (px)</label>
+                <input type="number" v-model="tb.rowHeight" step="5">
+            </div>
+            
+            <div class="form-group">
+                <label>表格上方描述语 (留空则不显示)</label>
+                <textarea v-model="tb.desc" placeholder="请输入描述文本，支持在右侧直接编辑..."></textarea>
+            </div>
+            
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 表格内数据请直接在右侧画布点击输入 👇</p>
+        </div>
+
         <div class="form-group qr-upload-box" v-if="showQRCode">
             <label>🔗 自定义底部二维码 <span class="blink-warning">【必换】</span></label>
             <div class="warning-tip">⚠️ 每次出图前，请务必检查最新的粉丝活码！你可以直接点击右侧的二维码更换。</div>
@@ -228,80 +284,108 @@
         <button class="btn-export" @click="exportImage">🚀 一键导出高清长图</button>
     </div>
 
-    <div class="canvas-area">
-        <div id="poster" class="poster" :class="[mode === 'expect' ? 'mode-a' : 'mode-b', 'theme-' + theme]">
+    <div class="canvas-area" data-gramm="false">
+        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" data-gramm="false">
             
             <img v-if="showWatermark" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
             
-            <div v-if="mode === 'expect'">
+            <div v-if="mode === 'expect'" class="mode-expect">
                 <div class="header-box">
-                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
+                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
                         <div class="header-meta"><span class="prefix-text">看{{ dataType }}，到&nbsp;</span><img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'"></div>
-                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
+                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
                     </div>
                 </div>
 
                 <div class="bento-grid">
                     <div class="glass-card card-large">
                         <div style="flex-shrink: 0; min-width: 150px; text-align: center;">
-                            <div class="data-value editable" contenteditable="true" spellcheck="false" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
+                            <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
                         </div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
                     </div>
-
                     <div class="glass-card card-tall">
-                        <h3 class="card-title editable" contenteditable="true" spellcheck="false" @blur="ex.leftTitle = $event.target.innerText">{{ ex.leftTitle }}</h3>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
+                        <h3 class="card-title editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ex.leftTitle = $event.target.innerText">{{ ex.leftTitle }}</h3>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
                     </div>
-
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
                     </div>
-
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 12px;" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
                     </div>
+                </div>
+            </div>
+
+            <div v-if="mode === 'table'" class="mode-table">
+                <div class="header-box-centered">
+                    <h1 class="title-bento editable centered-title" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
+                    <div class="meta-centered">
+                        看{{ dataType }}，到&nbsp;<img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                        &nbsp;|&nbsp; 
+                        <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span>
+                    </div>
+                </div>
+
+                <div class="glass-card table-wrapper">
+                    <div v-if="tb.desc" class="table-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="tb.desc = $event.target.innerText" v-html="formatText(tb.desc)"></div>
+                    
+                    <table class="data-table">
+                        <colgroup>
+                            <col v-for="(w, i) in tb.colWidths" :key="'col'+i" :style="{ width: w }">
+                        </colgroup>
+                        <tbody>
+                            <tr v-for="(row, rIndex) in tb.data" :key="'row'+rIndex" :class="{'table-head-row': rIndex === 0}">
+                                <td v-for="(cell, cIndex) in row" :key="'cell'+rIndex+'-'+cIndex" 
+                                    class="editable table-cell" 
+                                    :style="{ height: tb.rowHeight + 'px' }"
+                                    contenteditable="true" spellcheck="false" data-gramm="false" 
+                                    @blur="updateTableCell(rIndex, cIndex, $event)">
+                                    {{ cell }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <div v-if="mode === 'actual'">
                 <div class="header-box">
-                    <div class="date-box-left editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
+                    <div class="date-box-left editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
                         <span class="date-year">{{ date.split('-')[0] }}</span>
                         <span class="date-md">{{ date.split('-')[1] }}-{{ date.split('-')[2] }}</span>
                     </div>
                     <div class="title-right-wrapper">
-                        <h1 class="main-title editable" contenteditable="true" spellcheck="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
+                        <h1 class="main-title editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
                         <div class="sub-meta">
                             <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
-                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
+                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="data-section">
-                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
+                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
                     <div class="sec1-body">
                         <div class="data-col-01">
                             <div class="val-badge">
                                 <span class="val-lbl">公布值</span>
                                 <span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</span>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
                             </div>
                         </div>
-                        
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="grid-2col">
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -309,15 +393,15 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s2Status')" :class="ac.s2Status" title="点击循环切换状态">{{ getStatusText(ac.s2Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s2Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s2Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
                     </div>
                     
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -325,17 +409,17 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s3Status')" :class="ac.s3Status" title="点击循环切换状态">{{ getStatusText(ac.s3Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s3Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s3Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="banner-box">
-                    <div class="banner-left editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
-                    <div class="banner-right editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
+                    <div class="banner-left editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
+                    <div class="banner-right editable" contenteditable="true" spellcheck="false" data-gramm="false" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
                 </div>
             </div>
 
@@ -361,7 +445,7 @@
         el: '#app',
         data: {
             theme: 'default', 
-            mode: 'actual', 
+            mode: 'table', // 默认展示最新的表格模式
             dataType: 'CPI',
             date: '2026-04-10',
             showWatermark: true,
@@ -372,21 +456,25 @@
                 title: '美国3月CPI预期', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
             },
             ac: {
-                title: '美国3月CPI数据', 
-                s1Title: '未季调CPI年率', 
-                s1Value: '3.3%', 
-                s1Status: 'match', 
-                s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', 
-                s2Title: '核心CPI年率', 
-                s2Value: '2.6%', 
-                s2Status: 'low', 
-                s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', 
-                s3Title: '核心CPI月率', 
-                s3Value: '0.2%', 
-                s3Status: 'low', 
-                s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', 
-                bannerTitle: '3月CPI<br>“患上高烧”', 
-                bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
+                title: '美国3月CPI数据', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
+            },
+            // 💡 新增：表格模式核心数据模型
+            tb: {
+                title: '2026年全球宏观经济指标预测',
+                desc: '以下数据基于各大投行最新发布的季度报告汇总，反映了市场对未来通胀、就业及经济增长的核心预期。点击单元格即可直接修改数据。',
+                rows: 6,
+                cols: 3,
+                colWidthsStr: '30 35 35', // 用户输入的比例字符串
+                colWidths: ['30%', '35%', '35%'], // 映射到 CSS 的数组
+                rowHeight: 45, // 默认单元格最小行高
+                data: [
+                    ['指标名称', '2026 Q1 预期', '2026 Q2 预期'],
+                    ['美国 CPI 同比', '3.1%', '2.8%'],
+                    ['美国 核心 PCE', '2.5%', '2.3%'],
+                    ['新增非农 (万人)', '18.5', '15.0'],
+                    ['失业率', '3.9%', '4.0%'],
+                    ['联邦基金利率', '4.50%', '4.25%']
+                ]
             },
             savedMessage: '',
             isInitializing: true 
@@ -395,14 +483,13 @@
             this.loadData();
             setTimeout(() => { 
                 this.isInitializing = false; 
-                
                 this.$watch(
                     function() {
                         return {
                             theme: this.theme, mode: this.mode, dataType: this.dataType,
                             date: this.date, showWatermark: this.showWatermark,
                             showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                            ex: this.ex, ac: this.ac
+                            ex: this.ex, ac: this.ac, tb: this.tb // 增加表格对象的监听缓存
                         }
                     },
                     function(newVal) {
@@ -411,7 +498,7 @@
                             this.savedMessage = '✓ 已自动保存草稿';
                             setTimeout(() => { this.savedMessage = ''; }, 2000);
                         } catch (e) {
-                            console.warn('本地存储失败，可能是图片体积过大', e);
+                            console.warn('本地存储失败', e);
                         }
                     },
                     { deep: true }
@@ -422,9 +509,13 @@
             dataType(newVal, oldVal) {
                 if (this.isInitializing) return; 
                 
+                // 仅替换预期和公布的主标题中的 CPI/非农
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
                 if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
+                
+                // 表格标题也稍微智能联动一下
+                if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
                 
                 if (newVal === '非农') {
                     this.ex.mainData = '25万';
@@ -435,7 +526,6 @@
                     this.ac.s1Title = '季调后非农就业人口'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
                     this.ac.s2Title = '失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
                     this.ac.s3Title = '平均时薪月率'; this.ac.s3Value = '0.3%'; this.ac.s3Status = 'match'; this.ac.s3Desc = '录得0.3%，符合预期。';
-                    
                     this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
                 } 
                 else if (newVal === 'CPI') {
@@ -447,12 +537,50 @@
                     this.ac.s1Title = '未季调CPI年率'; this.ac.s1Value = '3.3%'; this.ac.s1Desc = '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。其中，汽油价格创纪录上涨。';
                     this.ac.s2Title = '核心CPI年率'; this.ac.s2Value = '2.6%'; this.ac.s2Status = 'low'; this.ac.s2Desc = '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。';
                     this.ac.s3Title = '核心CPI月率'; this.ac.s3Value = '0.2%'; this.ac.s3Status = 'low'; this.ac.s3Desc = '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。';
-                    
                     this.ac.bannerTitle = '3月CPI<br>“患上高烧”'; this.ac.bannerDesc = '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。';
                 }
             }
         },
         methods: {
+            // 💡 表格核心：更改行数/列数
+            changeTbSize(type, delta) {
+                if (type === 'row') {
+                    const newRows = this.tb.rows + delta;
+                    if (newRows < 1) return;
+                    this.tb.rows = newRows;
+                    if (delta > 0) {
+                        this.tb.data.push(new Array(this.tb.cols).fill('-')); // 加行，填入占位符
+                    } else {
+                        this.tb.data.pop(); // 减行
+                    }
+                } else if (type === 'col') {
+                    const newCols = this.tb.cols + delta;
+                    if (newCols < 1) return;
+                    this.tb.cols = newCols;
+                    this.tb.data.forEach(row => {
+                        if (delta > 0) row.push('-'); // 每行尾部加一格
+                        else row.pop(); // 每行尾部减一格
+                    });
+                    
+                    // 自动平分新的列宽
+                    const w = Math.floor(100 / newCols);
+                    this.tb.colWidthsStr = new Array(newCols).fill(w).join(' ');
+                    this.updateColWidths();
+                }
+            },
+            // 💡 表格核心：更新列宽比例
+            updateColWidths() {
+                let widths = this.tb.colWidthsStr.trim().split(/\s+/);
+                this.tb.colWidths = widths.map(w => w + '%');
+            },
+            // 💡 表格核心：画板上直接修改单元格内容时的同步方法
+            updateTableCell(rIndex, cIndex, event) {
+                let newRow = [...this.tb.data[rIndex]];
+                newRow[cIndex] = event.target.innerText;
+                // Vue 2 必须使用 $set 来更新数组内的深层数据，保证响应式和本地保存触发
+                this.$set(this.tb.data, rIndex, newRow);
+            },
+            
             loadData() {
                 const saved = localStorage.getItem('jin10_poster_draft');
                 if (saved) {
@@ -516,18 +644,25 @@
                     scale: scale, 
                     useCORS: true, 
                     backgroundColor: null,
-                    logging: false
+                    logging: false,
+                    ignoreElements: (node) => {
+                        if (node.tagName && node.tagName.toLowerCase().includes('grammarly')) return true;
+                        if (node.className && typeof node.className === 'string' && node.className.includes('grammarly')) return true;
+                        if (node.hasAttribute && node.hasAttribute('data-grammarly-shadow-root')) return true;
+                        return false;
+                    }
                 };
 
                 const btn = document.querySelector('.btn-export');
                 const originalText = btn.innerText;
                 btn.innerText = '正在生成 高清大图...';
 
+                let prefixMap = { 'expect': '预期', 'actual': '数据公布', 'table': '图表' };
+                
                 html2canvas(element, options).then(canvas => {
                     const imgData = canvas.toDataURL('image/jpeg', 0.9);
                     const link = document.createElement('a');
-                    const prefix = this.mode === 'expect' ? '预期' : '数据公布';
-                    link.download = `金十_${this.dataType}_${prefix}_${this.date}.jpg`;
+                    link.download = `金十_${this.dataType}_${prefixMap[this.mode]}_${this.date}.jpg`;
                     link.href = imgData;
                     document.body.appendChild(link);
                     link.click();
