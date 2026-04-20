@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (自动保存版)</title>
+    <title>数据长图生成器 (全向自动保存版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -55,7 +55,7 @@
         .radio-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
 
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 8px; }
-        .file-upload-wrapper input[type=file] { display: none; } /* 隐藏原生输入框，完全由按钮控制 */
+        .file-upload-wrapper input[type=file] { display: none; }
         .btn-upload { display: block; width: 100%; background: #fff; border: 1px dashed #999; color: #666; text-align: center; padding: 10px; border-radius: 4px; cursor: pointer; }
         .btn-export { background: #4A90E2; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 24px; width: 100%;}
         .btn-export:hover { background: #357ABD; }
@@ -73,10 +73,7 @@
         .editable:focus { outline: none; box-shadow: 0 0 0 2px #4A90E2; background: rgba(255,255,255,0.2); }
         .clickable-tag:hover { box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.8); cursor: pointer; }
 
-        .watermark-logo {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 60%; opacity: 0.05; pointer-events: none; z-index: 9999; object-fit: contain; filter: brightness(0);
-        }
+        .watermark-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; pointer-events: none; z-index: 9999; object-fit: contain; filter: brightness(0); }
         .theme-dark .watermark-logo { filter: brightness(0) invert(1); opacity: 0.04; }
 
         .poster { width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s;}
@@ -86,35 +83,17 @@
         .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
         .footer-left .slogan { font-size: 16px; color: var(--text-main); }
         
-        /* 💡 新增：二维码防漏换，鼠标交互增强 */
-        .qr-code { 
-            width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; 
-            cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .qr-code:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            outline: 2px dashed #FF4D4F;
-        }
-
+        .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; }
 
         /* ==================== 模式 A：预期模式 ==================== */
-        .poster.mode-a {
-            padding: 40px;
-            background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); 
-            background-color: var(--bg-base);
-        }
-        .glass-card {
-            background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity));
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px;
-        }
+        .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
+        .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
         .mode-a .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid var(--text-main); padding-bottom: 20px;}
         .mode-a .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
         .mode-a .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
-        
         .mode-a .header-logo { height: 28px; margin-left: 8px; object-fit: contain; }
-        
         .mode-a .title-bento { font-size: 44px; color: var(--text-main);}
         .mode-a .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
         .mode-a .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
@@ -126,78 +105,41 @@
 
         /* ==================== 模式 B：公布数据模式 ==================== */
         .poster.mode-b { padding: 40px; background-color: var(--b-bg); color: var(--b-text); }
-        
-        .mode-b .header-box { 
-            display: flex; align-items: center; gap: 15px; flex-wrap: nowrap;
-            margin-bottom: 20px; position: relative; z-index: 2; padding-bottom: 15px;
-            border-bottom: 1px solid rgba(150,150,150,0.3);
-            white-space: nowrap;
-        }
-        .mode-b .date-box-left {
-            background: var(--b-date-bg); color: white; padding: 12px 18px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            flex-shrink: 0;
-        }
+        .mode-b .header-box { display: flex; align-items: center; gap: 15px; flex-wrap: nowrap; margin-bottom: 20px; position: relative; z-index: 2; padding-bottom: 15px; border-bottom: 1px solid rgba(150,150,150,0.3); white-space: nowrap; }
+        .mode-b .date-box-left { background: var(--b-date-bg); color: white; padding: 12px 18px; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; }
         .mode-b .date-year { font-size: 20px; letter-spacing: 6px; opacity: 0.9; margin-bottom: 4px; }
         .mode-b .date-md { font-size: 38px; font-weight: 900; line-height: 1; }
-        
         .mode-b .title-right-wrapper { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;}
         .mode-b .main-title { font-size: 50px; color: var(--b-text); line-height: 1.1; margin-bottom: 12px; white-space: nowrap; overflow: visible;}
         .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
-        
         .mode-b .sub-meta img { height: 22px; opacity: 0.9;} 
         .mode-b .date-divider-group { font-weight: 400; font-size: 14px; opacity: 0.7; margin-left: 4px;}
-        
         .mode-b .data-section { background: var(--b-card); margin-bottom: 20px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
         .mode-b .sec-num { background: var(--b-accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold;}
-        
         .mode-b .sec1-body { display: flex; padding: 25px 20px; align-items: center; gap: 25px; }
         .mode-b .data-col-01 { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; min-width: 170px;}
-        
-        .mode-b .val-badge { 
-            background: var(--b-val-bg); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); 
-            display: flex; align-items: center; gap: 10px; margin-bottom: 6px; transition: background 0.3s;
-        }
+        .mode-b .val-badge { background: var(--b-val-bg); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px; margin-bottom: 6px; transition: background 0.3s; }
         .mode-b .val-badge .val-lbl { font-size: 15px; font-weight: bold; color: var(--b-val-lbl); margin: 0; transition: color 0.3s;}
-        
-        .mode-b .status-tag { 
-            display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; 
-            color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s;
-            white-space: nowrap; 
-        }
+        .mode-b .status-tag { display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s; white-space: nowrap; }
         .mode-b .status-tag.low { color: #27AE60; opacity: 1; }
         .mode-b .status-tag.high { color: var(--num-color); opacity: 1; }
-        
         .mode-b .num-col { flex-shrink: 0; }
         .mode-b .sec-value { font-size: 72px; font-weight: 900; color: var(--num-color); line-height: 1; transition: color 0.3s;}
         .mode-b .sec-unit { font-size: 32px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
         .mode-b .sec-desc { font-size: 15px; line-height: 1.6; color: var(--b-text); opacity: 0.85; flex: 1; text-align: justify;}
-
         .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; margin-bottom: 20px;}
         .mode-b .sec-small { background: var(--b-card); padding: 20px; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec-small-head { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(150,150,150,0.2);}
-        
         .mode-b .sec-small-body { display: flex; gap: 15px; align-items: center; margin-bottom: 15px;}
         .mode-b .val-box-inner { background: var(--b-val-bg); padding: 6px 10px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); transition: background 0.3s;}
         .mode-b .val-box-inner .val-lbl { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
-        
         .mode-b .sec-small-body .status-tag { font-size: 11px; }
         .mode-b .sec-small-body .sec-value { font-size: 58px; }
         .mode-b .sec-small-body .sec-unit { font-size: 26px; }
-
         .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 30px;}
-        .mode-b .banner-left { 
-            background: var(--b-date-bg); color: white; padding: 20px; width: 170px; 
-            display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center;
-            border-radius: 8px 0 0 8px;
-        }
-        .mode-b .banner-right { 
-            background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; 
-            line-height: 1.7; text-align: justify; opacity: 0.95;
-            border-radius: 0 8px 8px 0;
-        }
-
+        .mode-b .banner-left { background: var(--b-date-bg); color: white; padding: 20px; width: 170px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center; border-radius: 8px 0 0 8px; }
+        .mode-b .banner-right { background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; line-height: 1.7; text-align: justify; opacity: 0.95; border-radius: 0 8px 8px 0; }
         .checkbox-label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #555; }
     </style>
 </head>
@@ -211,9 +153,9 @@
         </h2>
 
         <div style="background: #E8F0FE; color: #1967D2; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; line-height: 1.5;">
-            💡 <strong>智能保存版：</strong><br>
-            1. 内容已开启<strong>自动保存</strong>，刷新或关掉网页不丢失。<br>
-            2. <strong>快捷换码：直接点击右侧预览图中的二维码</strong>即可快速更换。
+            💡 <strong>智能保存增强版：</strong><br>
+            1. <strong>画布直编防丢：</strong> 在画布上修改完文字，<strong>鼠标点一下旁边(失去焦点)</strong>，内容即刻自动保存！<br>
+            2. <strong>快捷换码：</strong> 直接点击右侧图片中的二维码即可更换。
         </div>
 
         <div class="form-group">
@@ -271,7 +213,7 @@
 
         <div v-if="mode === 'actual'">
             <div class="form-group"><label>主标题</label><input type="text" v-model="ac.title"></div>
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 切换类型后，标题已联动更新。文案请直接点击右侧画布修改 👇</p>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 文案请直接点击右侧画布修改 👇</p>
         </div>
 
         <div class="form-group qr-upload-box" v-if="showQRCode">
@@ -293,73 +235,73 @@
             
             <div v-if="mode === 'expect'">
                 <div class="header-box">
-                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false">{{ ex.title }}</h1>
+                    <h1 class="title-bento editable" contenteditable="true" spellcheck="false" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
                         <div class="header-meta"><span class="prefix-text">看{{ dataType }}，到&nbsp;</span><img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'"></div>
-                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</div>
+                        <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
                     </div>
                 </div>
 
                 <div class="bento-grid">
                     <div class="glass-card card-large">
                         <div style="flex-shrink: 0; min-width: 150px; text-align: center;">
-                            <div class="data-value editable" contenteditable="true" spellcheck="false">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
+                            <div class="data-value editable" contenteditable="true" spellcheck="false" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
                         </div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.mainDesc)"></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
                     </div>
 
                     <div class="glass-card card-tall">
-                        <h3 class="card-title editable" contenteditable="true" spellcheck="false">{{ ex.leftTitle }}</h3>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.leftDesc)"></div>
+                        <h3 class="card-title editable" contenteditable="true" spellcheck="false" @blur="ex.leftTitle = $event.target.innerText">{{ ex.leftTitle }}</h3>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
                     </div>
 
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
                     </div>
 
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
-                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)"></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" style="margin-bottom: 12px;" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
+                        <div class="data-desc editable" contenteditable="true" spellcheck="false" style="text-align: left;" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
                     </div>
                 </div>
             </div>
 
             <div v-if="mode === 'actual'">
                 <div class="header-box">
-                    <div class="date-box-left editable" contenteditable="true" spellcheck="false">
+                    <div class="date-box-left editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
                         <span class="date-year">{{ date.split('-')[0] }}</span>
                         <span class="date-md">{{ date.split('-')[1] }}-{{ date.split('-')[2] }}</span>
                     </div>
                     <div class="title-right-wrapper">
-                        <h1 class="main-title editable" contenteditable="true" spellcheck="false">{{ ac.title }}</h1>
+                        <h1 class="main-title editable" contenteditable="true" spellcheck="false" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
                         <div class="sub-meta">
                             <span class="prefix-text">看{{ dataType }}，到&nbsp;</span> <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
-                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false">{{ date }} 制图</span></span>
+                            <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="data-section">
-                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s1Title }}</span></div>
+                    <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
                     <div class="sec1-body">
                         <div class="data-col-01">
                             <div class="val-badge">
                                 <span class="val-lbl">公布值</span>
                                 <span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</span>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
                             </div>
                         </div>
                         
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s1Desc)"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="grid-2col">
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s2Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -367,15 +309,15 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s2Status')" :class="ac.s2Status" title="点击循环切换状态">{{ getStatusText(ac.s2Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s2Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s2Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s2Desc)"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
                     </div>
                     
                     <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false">{{ ac.s3Title }}</span></div>
+                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
                         <div class="sec-small-body">
                             <div class="val-box">
                                 <div class="val-box-inner">
@@ -383,17 +325,17 @@
                                     <div class="status-tag editable clickable-tag" @click="toggleStatus('s3Status')" :class="ac.s3Status" title="点击循环切换状态">{{ getStatusText(ac.s3Status) }}</div>
                                 </div>
                             </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false">
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
                                 <span class="sec-value">{{ splitUnit(ac.s3Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s3Value).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s3Desc)"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
                     </div>
                 </div>
 
                 <div class="banner-box">
-                    <div class="banner-left editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerTitle)"></div>
-                    <div class="banner-right editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerDesc)"></div>
+                    <div class="banner-left editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
+                    <div class="banner-right editable" contenteditable="true" spellcheck="false" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
                 </div>
             </div>
 
@@ -447,17 +389,15 @@
                 bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
             },
             savedMessage: '',
-            isInitializing: true // 防止初次加载时触发替换逻辑
+            isInitializing: true 
         },
         mounted() {
             this.loadData();
-            // 延迟关闭初始化状态，然后开启本地自动保存监听
             setTimeout(() => { 
                 this.isInitializing = false; 
                 
                 this.$watch(
                     function() {
-                        // 监听所有核心状态
                         return {
                             theme: this.theme, mode: this.mode, dataType: this.dataType,
                             date: this.date, showWatermark: this.showWatermark,
@@ -480,7 +420,7 @@
         },
         watch: {
             dataType(newVal, oldVal) {
-                if (this.isInitializing) return; // 初始化加载缓存时不触发内容重置
+                if (this.isInitializing) return; 
                 
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
@@ -513,7 +453,6 @@
             }
         },
         methods: {
-            // 从本地存储恢复数据
             loadData() {
                 const saved = localStorage.getItem('jin10_poster_draft');
                 if (saved) {
@@ -525,11 +464,9 @@
                     }
                 }
             },
-            // 点击图片触发隐藏的文件上传
             triggerQrUpload() {
                 this.$refs.qrInput.click();
             },
-            // 读取上传的二维码并进行智能压缩转换为Base64 (防止缓存爆满)
             uploadQrCode(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -538,21 +475,18 @@
                         const img = new Image();
                         img.onload = () => {
                             const canvas = document.createElement('canvas');
-                            // 二维码不需要太高清，限制最大宽度 300px
                             const MAX_WIDTH = 300;
                             const scaleSize = MAX_WIDTH / img.width;
                             canvas.width = MAX_WIDTH;
                             canvas.height = img.height * scaleSize;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            // 压缩为 jpeg 格式，减小体积以便存入 localStorage
                             this.qrCodeUrl = canvas.toDataURL('image/jpeg', 0.85);
                         };
                         img.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
-                // 清空 input 使得重复上传同一文件也能触发
                 event.target.value = '';
             },
             toggleStatus(field) {
@@ -574,18 +508,35 @@
             },
             exportImage() {
                 const element = document.getElementById('poster');
+                const targetWidth = 1242;
+                const originalWidth = element.offsetWidth; 
+                const scale = targetWidth / originalWidth;
+
+                const options = {
+                    scale: scale, 
+                    useCORS: true, 
+                    backgroundColor: null,
+                    logging: false
+                };
+
                 const btn = document.querySelector('.btn-export');
                 const originalText = btn.innerText;
                 btn.innerText = '正在生成 高清大图...';
 
-                html2canvas(element, { scale: 1242 / element.offsetWidth, useCORS: true, backgroundColor: null }).then(canvas => {
+                html2canvas(element, options).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
                     const link = document.createElement('a');
-                    link.download = `金十_${this.dataType}_${this.mode === 'expect' ? '预期' : '公布'}_${this.date}.jpg`;
-                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    const prefix = this.mode === 'expect' ? '预期' : '数据公布';
+                    link.download = `金十_${this.dataType}_${prefix}_${this.date}.jpg`;
+                    link.href = imgData;
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
+                    
                     btn.innerText = originalText;
                 }).catch(err => {
                     alert('导出失败，请尝试在本地环境(Live Server)运行。');
+                    console.error(err);
                     btn.innerText = originalText;
                 });
             }
