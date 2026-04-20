@@ -90,10 +90,8 @@
         .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         
-        /* 💡 修复：把文字变得干净，防止各种奇怪的间距 */
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; white-space: nowrap;}
         
-        /* 💡 新增：表格描述为空时的占位符样式 */
         .empty-placeholder { min-height: 24px; display: block; }
         .empty-placeholder:empty::before { content: '✏️ 点击此处添加描述语 (导出截图时会自动隐藏此行)'; color: #bbb; cursor: text; }
 
@@ -104,7 +102,10 @@
         .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150, 150, 150, 0.3); padding-bottom: 20px;}
         .mode-expect .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
         .mode-expect .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
-        .mode-expect .header-logo { height: 28px; margin-left: 8px; object-fit: contain; }
+        
+        /* 💡 修复：移除多余 margin，靠 flex 的 gap 控制间距 */
+        .mode-expect .header-logo { height: 28px; margin-left: 0; object-fit: contain; }
+        
         .mode-expect .title-bento { color: var(--text-main); line-height: 1.1;}
         .mode-expect .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
         .mode-expect .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
@@ -120,7 +121,8 @@
         .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
         .mode-table .header-logo { height: 20px; object-fit: contain; }
         
-        .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; text-align: center; opacity: 0.9; }
+        .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; text-align: left; opacity: 0.9; }
+        
         .mode-table .table-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
         .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border-style: hidden; }
         .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; position: relative;}
@@ -319,8 +321,10 @@
                     <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
                         <div class="header-meta">
-                            <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ex.prefix = $event.target.innerText.trim()">{{ ex.prefix }}</span>&nbsp;
-                            <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ex.prefix = $event.target.innerText.trim()">{{ ex.prefix }}</span>
+                                <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                            </div>
                         </div>
                         <div style="font-size: 14px; color: var(--text-sub);" class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</div>
                     </div>
@@ -352,10 +356,11 @@
                 <div class="header-box-centered">
                     <h1 class="title-bento editable centered-title" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
                     <div class="meta-centered">
-                        <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="tb.prefix = $event.target.innerText.trim()">{{ tb.prefix }}</span>&nbsp;
-                        <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
-                        &nbsp;|&nbsp; 
-                        <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="tb.prefix = $event.target.innerText.trim()">{{ tb.prefix }}</span>
+                            <img src="logo.svg" class="header-logo" alt="" onerror="this.style.display='none'">
+                        </div>
+                        <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                     </div>
                 </div>
 
@@ -402,8 +407,10 @@
                     <div class="title-right-wrapper">
                         <h1 class="main-title editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ac.title = $event.target.innerText">{{ ac.title }}</h1>
                         <div class="sub-meta">
-                            <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.prefix = $event.target.innerText.trim()">{{ ac.prefix }}</span>&nbsp;
-                            <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span class="prefix-text editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.prefix = $event.target.innerText.trim()">{{ ac.prefix }}</span>
+                                <img src="logo.svg" alt="" onerror="this.style.display='none'"> 
+                            </div>
                             <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                         </div>
                     </div>
@@ -471,7 +478,7 @@
                         <img src="icon.svg" style="height: 24px;" alt="" onerror="this.style.display='none'">
                         JIN10.COM
                     </div>
-                    <div class="slogan">看{{ dataType === '非农' ? '非农' : '数据' }}，到金十，立即下载金十数据APP>></div>
+                    <div class="slogan editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="slogan = $event.target.innerText.trim()">{{ slogan }}</div>
                 </div>
                 <div style="display: flex; gap: 15px; align-items: center;">
                     <img :src="qrCodeUrl" class="qr-code" alt="QR" @click.stop="triggerQrUpload" title="点击更换二维码">
@@ -511,6 +518,9 @@
             titleFontSize: 50, 
             qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
             
+            // 💡 底部通用引流 Slogan
+            slogan: '看CPI，到金十，立即下载金十数据APP>>',
+
             ex: {
                 title: '美国3月CPI预期', prefix: '看CPI，到', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
             },
@@ -531,7 +541,7 @@
             excelPaste: '',
             savedMessage: '',
             isInitializing: true,
-            isExporting: false // 💡 新增：用于在截图瞬间隐藏空白占位符
+            isExporting: false 
         },
         mounted() {
             this.loadData();
@@ -543,7 +553,7 @@
                             theme: this.theme, mode: this.mode, dataType: this.dataType,
                             date: this.date, showWatermark: this.showWatermark,
                             showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                            titleFontSize: this.titleFontSize, 
+                            titleFontSize: this.titleFontSize, slogan: this.slogan,
                             ex: this.ex, ac: this.ac, tb: this.tb 
                         }
                     },
@@ -575,7 +585,10 @@
                 if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
                 
                 if (newVal === '非农') {
+                    // 💡 动态替换引流 Slogan 和头部 Prefix
+                    this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看非农');
                     this.ex.prefix = '看非农，到'; this.ac.prefix = '看非农，到'; this.tb.prefix = '看非农，到';
+                    
                     this.ex.mainData = '25万'; this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
                     this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
                     this.ac.title = '美国3月非农数据';
@@ -585,7 +598,10 @@
                     this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
                 } 
                 else if (newVal === 'CPI') {
+                    // 💡 动态替换引流 Slogan 和头部 Prefix
+                    this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看CPI');
                     this.ex.prefix = '看CPI，到'; this.ac.prefix = '看CPI，到'; this.tb.prefix = '看数据，到';
+                    
                     this.ex.mainData = '3.3%'; this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
                     this.ex.rightTopData = '2.7%'; this.ex.rightBottomData = '0.9%';
                     this.ac.title = '美国3月CPI数据';
@@ -747,7 +763,8 @@
                         let parsed = JSON.parse(saved);
                         if (parsed.titleFontSize === undefined) parsed.titleFontSize = 50; 
                         
-                        // 兼容加载前缀数据
+                        // 兼容老版本的 slogan/prefix
+                        if (parsed.slogan === undefined) parsed.slogan = this.dataType === '非农' ? '看非农，到金十，立即下载金十数据APP>>' : '看CPI，到金十，立即下载金十数据APP>>';
                         if (parsed.ex && parsed.ex.prefix === undefined) parsed.ex.prefix = this.dataType === '非农' ? '看非农，到' : '看CPI，到';
                         if (parsed.ac && parsed.ac.prefix === undefined) parsed.ac.prefix = this.dataType === '非农' ? '看非农，到' : '看CPI，到';
                         if (parsed.tb && parsed.tb.prefix === undefined) parsed.tb.prefix = this.dataType === '非农' ? '看非农，到' : '看数据，到';
@@ -801,7 +818,7 @@
             },
             exportImage() {
                 this.selectedCell = null; 
-                this.isExporting = true; // 💡 触发：截图时自动隐藏空的占位符
+                this.isExporting = true; 
                 
                 setTimeout(() => {
                     const element = document.getElementById('poster');
@@ -834,14 +851,14 @@
                         document.body.removeChild(link);
                         
                         btn.innerText = originalText;
-                        this.isExporting = false; // 💡 恢复
+                        this.isExporting = false; 
                     }).catch(err => {
                         alert('导出失败，请尝试在本地环境(Live Server)运行。');
                         console.error(err);
                         btn.innerText = originalText;
-                        this.isExporting = false; // 💡 恢复
+                        this.isExporting = false; 
                     });
-                }, 100); // 留出一点时间让 Vue 将占位符隐藏
+                }, 100); 
             }
         }
     });
