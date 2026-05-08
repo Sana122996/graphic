@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (细节打磨终极版)</title>
+    <title>数据长图生成器 (全尺寸覆盖旗舰版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -80,7 +80,7 @@
         .watermark-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; pointer-events: none; z-index: 9999; object-fit: contain; filter: brightness(0); }
         .theme-dark .watermark-logo { filter: brightness(0) invert(1); opacity: 0.04; }
 
-        .poster { display: flex; flex-direction: column; width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s, width 0.3s;}
+        .poster { display: flex; flex-direction: column; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s, width 0.3s;}
         .title-bento, .main-title { font-family: 'Noto Serif SC', serif !important; font-weight: 900; margin: 0; letter-spacing: 1px; transition: font-size 0.2s; }
         
         .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 15px; position: relative; z-index: 2; min-height: 80px; }
@@ -112,21 +112,64 @@
         .mode-expect .data-desc { font-size: 16px; color: var(--text-main); line-height: 1.6; }
         .mode-expect .card-title { font-size: 22px; font-weight: bold; color: var(--text-main); margin-top: 0; margin-bottom: 10px; }
 
+        /* ==================== 缩略图模板 专属排版锁定 ==================== */
+        .mode-thumbnail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-bottom: 40px; /* 视觉补偿，让重心上提 */
+        }
+        .thumb-logo-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 60px;
+        }
+        .thumb-logo-box img {
+            height: 52px;
+            object-fit: contain;
+        }
+        .thumb-logo-box span {
+            font-size: 42px;
+            font-weight: 900;
+            color: #4A90E2;
+            font-family: 'Noto Sans SC', sans-serif;
+            letter-spacing: 2px;
+        }
+        .thumb-subtitle {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 54px;
+            font-weight: 400;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            letter-spacing: 15px; /* 还原样图中的宽间距 */
+            white-space: nowrap;
+            opacity: 0.9;
+        }
+        .thumb-main-title {
+            font-family: 'Noto Serif SC', serif !important;
+            font-weight: 900 !important; /* 强制锁定 Heavy 字重 */
+            font-size: 120px;
+            line-height: 1.1;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
         /* ==================== 表格模式 特有样式 ==================== */
         .mode-table .header-box-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; z-index: 2; text-align: center;}
         .mode-table .centered-title { color: var(--text-main); margin-bottom: 12px; line-height: 1.2;}
         .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
         .mode-table .header-logo { height: 20px; object-fit: contain; }
-        
         .mode-table .table-desc { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; text-align: left; opacity: 0.9; }
-        
         .mode-table .table-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
         .mode-table .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border-style: hidden; }
         .mode-table .table-cell { border: 1px solid var(--border-color); padding: 12px 8px; text-align: center; font-size: 16px; color: var(--text-main); word-wrap: break-word; vertical-align: middle; position: relative;}
-        
         .table-cell.selected-cell { outline: 2px solid #4A90E2; outline-offset: -2px; box-shadow: inset 0 0 15px rgba(74, 144, 226, 0.2); z-index: 10; }
         .table-cell-content { outline: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; min-height: 1.5em;}
-        
         .bg-theme { background-color: rgba(var(--accent), 0.12) !important; }
         .bg-gray { background-color: rgba(0,0,0,0.04) !important; }
         .theme-dark .bg-gray { background-color: rgba(255,255,255,0.08) !important; }
@@ -152,12 +195,9 @@
         .mode-b .status-tag { display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s; white-space: nowrap; }
         .mode-b .status-tag.low { color: #27AE60; opacity: 1; }
         .mode-b .status-tag.high { color: var(--num-color); opacity: 1; }
-        
-        /* 💡 修复：强制不换行，并等比例缩减字号 */
         .mode-b .num-col { flex-shrink: 0; white-space: nowrap; }
         .mode-b .sec-value { font-size: 60px; font-weight: 900; color: var(--num-color); line-height: 0.9; transition: color 0.3s;}
         .mode-b .sec-unit { font-size: 28px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
-        
         .mode-b .sec-desc { font-size: 15px; line-height: 1.6; color: var(--b-text); opacity: 0.85; flex: 1; text-align: justify;}
         .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; z-index: 2; margin-bottom: 12px;}
         .mode-b .sec-small { background: var(--b-card); padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);}
@@ -166,11 +206,8 @@
         .mode-b .val-box-inner { background: var(--b-val-bg); padding: 6px 10px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); transition: background 0.3s;}
         .mode-b .val-box-inner .val-lbl { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
         .mode-b .sec-small-body .status-tag { font-size: 11px; }
-        
-        /* 💡 修复：副模块数据字号等比缩减 */
         .mode-b .sec-small-body .sec-value { font-size: 50px; }
         .mode-b .sec-small-body .sec-unit { font-size: 24px; }
-        
         .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 15px;}
         .mode-b .banner-left { background: var(--b-date-bg); color: white; padding: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center; border-radius: 8px 0 0 8px; flex-shrink: 0;}
         .mode-b .banner-right { background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; line-height: 1.7; text-align: justify; opacity: 0.95; border-radius: 0 8px 8px 0; }
@@ -202,42 +239,55 @@
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: mode === 'expect'}" @click="mode = 'expect'">预期模板</div>
                 <div class="radio-btn" :class="{active: mode === 'actual'}" @click="mode = 'actual'">公布模板</div>
-                <div class="radio-btn" :class="{active: mode === 'table'}" @click="mode = 'table'">表格模板 (多维)</div>
+                <div class="radio-btn" :class="{active: mode === 'table'}" @click="mode = 'table'">表格模板</div>
+                <div class="radio-btn" :class="{active: mode === 'thumbnail'}" @click="mode = 'thumbnail'">封面缩略图</div>
             </div>
         </div>
 
-        <div class="form-group" v-if="mode !== 'table'">
+        <div class="form-group" v-if="mode !== 'table' && mode !== 'thumbnail'">
             <label>📊 2. 选择数据类型 (联动标题)</label>
             <div class="radio-group">
                 <div class="radio-btn" :class="{active: dataType === 'CPI'}" @click="dataType = 'CPI'">CPI 数据</div>
                 <div class="radio-btn" :class="{active: dataType === '非农'}" @click="dataType = '非农'">非农 数据</div>
             </div>
         </div>
+
+        <div v-if="mode === 'thumbnail'">
+            <div class="form-group">
+                <label>缩略图副标题</label>
+                <input type="text" v-model="thumb.subtitle">
+            </div>
+            <div class="form-group">
+                <label>主标题 (前缀)</label>
+                <input type="text" v-model="thumb.prefix">
+            </div>
+            <div class="form-group">
+                <label>主标题 (高亮核心字)</label>
+                <input type="text" v-model="thumb.highlight">
+            </div>
+            <p style="font-size: 13px; color: #888; text-align: center;">👇 您也可以直接在右侧画布上点击修改 👇</p>
+        </div>
         
-        <div class="form-group" style="background: #E6F7FF; border: 1px solid #91D5FF;">
+        <div class="form-group" style="background: #E6F7FF; border: 1px solid #91D5FF;" v-if="mode !== 'thumbnail'">
             <label style="color: #096DD9;">🔠 3. 排版与外框调节</label>
-            
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #fff; padding: 8px 10px; border-radius: 4px; border: 1px solid #ddd;">
                 <span style="font-size: 13px; color: #555; white-space: nowrap; font-weight: bold;">大标题字号</span>
                 <input type="range" v-model="titleFontSize" min="30" max="80" step="1" style="flex: 1; margin: 0;">
                 <span style="font-size: 13px; color: #4A90E2; width: 35px; font-weight: bold; text-align: right;">{{titleFontSize}}px</span>
             </div>
-
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #fff; padding: 8px 10px; border-radius: 4px; border: 1px solid #ddd;">
                 <span style="font-size: 13px; color: #555; white-space: nowrap; font-weight: bold;">画布总宽度</span>
                 <input type="range" v-model="posterWidth" min="500" max="900" step="5" style="flex: 1; margin: 0;">
                 <span style="font-size: 13px; color: #4A90E2; width: 35px; font-weight: bold; text-align: right;">{{posterWidth}}px</span>
             </div>
-
             <div style="display: flex; align-items: center; gap: 10px; background: #fff; padding: 8px 10px; border-radius: 4px; border: 1px solid #ddd;">
                 <span style="font-size: 13px; color: #555; white-space: nowrap; font-weight: bold;">左侧列宽度</span>
                 <input type="range" v-model="numBoxWidth" min="100" max="350" step="5" style="flex: 1; margin: 0;">
                 <span style="font-size: 13px; color: #4A90E2; width: 35px; font-weight: bold; text-align: right;">{{numBoxWidth}}px</span>
             </div>
-            <div style="font-size: 11px; color: #888; margin-top: 4px; text-align: right;">(缩放左侧列，可灵活调整右侧文本框空间)</div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="mode !== 'thumbnail'">
             <label>⚙️ 4. 显示设置 & 制图日期</label>
             <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px;">
                 <label class="checkbox-label" style="margin:0;"><input type="checkbox" v-model="showWatermark"> 大水印</label>
@@ -251,95 +301,56 @@
         <div v-if="mode === 'expect'">
             <div class="form-group"><label>主标题</label><input type="text" v-model="ex.title"></div>
             <div class="form-group"><label>顶部核心数据</label><input type="text" v-model="ex.mainData"></div>
-            <div class="form-group"><label>左侧模块标题</label><input type="text" v-model="ex.leftTitle"></div>
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 文案请直接点击右侧画布修改 👇</p>
         </div>
 
         <div v-if="mode === 'actual'">
             <div class="form-group"><label>主标题</label><input type="text" v-model="ac.title"></div>
-            <p style="font-size: 13px; color: #888; text-align: center;">👇 状态及文案请直接在右侧画布修改 👇</p>
         </div>
 
         <div v-if="mode === 'table'">
-            
             <div class="form-group" style="background: #E8F0FE; border: 1px solid #A0C3FF;">
                 <label style="color: #1967D2;">📋 从 Excel 快速导入</label>
                 <textarea v-model="excelPaste" placeholder="在 Excel 中选中表格复制，然后粘贴到这里..." style="height: 60px;"></textarea>
                 <button class="btn-ctrl" style="width:100%; margin-top:8px; background:#4A90E2; color:white; border:none; font-weight:bold;" @click="importExcel">⬇️ 一键生成表格</button>
             </div>
-
             <div class="form-group"><label>主标题</label><input type="text" v-model="tb.title"></div>
-            
-            <div class="form-group">
-                <div class="grid-ctrl"><label style="margin:0;">行列调整</label></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                    <div>
-                        <div style="font-size:12px; margin-bottom:6px; color:#666;">行数: {{tb.rows}}</div>
-                        <div style="display: flex; gap: 4px;">
-                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('row', -1)">- 行</button>
-                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('row', 1)">+ 行</button>
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-size:12px; margin-bottom:6px; color:#666;">列数: {{tb.cols}}</div>
-                        <div style="display: flex; gap: 4px;">
-                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('col', -1)">- 列</button>
-                            <button class="btn-ctrl" style="flex:1" @click="changeTbSize('col', 1)">+ 列</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group" style="background: #FFF7E6; border: 1px solid #FFD591;">
-                <label style="color: #D46B08;">🖌️ 单元格设置 (先点击右侧选中格子)</label>
-                <div v-if="selectedCell" style="display: flex; flex-wrap: wrap; gap: 6px;">
-                    <button class="btn-ctrl" @click="toggleCellProp('bold')"><b>加粗</b></button>
-                    <button class="btn-ctrl" @click="setCellBg('theme')"><span style="color:var(--accent-text, #4A90E2)">■</span> 主色底</button>
-                    <button class="btn-ctrl" @click="setCellBg('gray')"><span style="color:#999">■</span> 浅灰底</button>
-                    <button class="btn-ctrl" @click="setCellBg('')">⭕ 清空底色</button>
-                    <button class="btn-ctrl" @click="mergeCell('right')">向右合并</button>
-                    <button class="btn-ctrl" @click="mergeCell('down')">向下合并</button>
-                    <button class="btn-ctrl" @click="unmergeCell" style="color: #E60012;">取消合并</button>
-                </div>
-                <div v-else style="font-size:12px;color:#D46B08; text-align: center; padding: 8px 0;">
-                    👈 请在右边表格点选一个单元格
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>列宽比例设定 (用空格隔开，对应每一列)</label>
-                <input type="text" v-model="tb.colWidthsStr" @change="updateColWidths" placeholder="例如: 30 35 35">
-            </div>
-
-            <div class="form-group">
-                <label>单元格最小行高 (px)</label>
-                <input type="number" v-model="tb.rowHeight" step="5">
-            </div>
-            
         </div>
 
-        <div class="form-group qr-upload-box" v-if="showQRCode">
+        <div class="form-group qr-upload-box" v-if="showQRCode && mode !== 'thumbnail'">
             <label>🔗 自定义底部二维码 <span class="blink-warning">【必换】</span></label>
-            <div class="warning-tip">⚠️ 每次出图前，请务必检查最新的粉丝活码！你可以直接点击右侧的二维码更换。</div>
             <div class="file-upload-wrapper">
                 <div class="btn-upload highlight-btn" @click="triggerQrUpload">👉 点击选择本地新二维码图片</div>
                 <input type="file" ref="qrInput" @change="uploadQrCode" accept="image/*">
             </div>
         </div>
 
-        <button class="btn-export" @click="exportImage">🚀 一键导出高清长图</button>
+        <button class="btn-export" @click="exportImage">🚀 一键导出高清图片</button>
     </div>
 
     <div class="canvas-area" data-gramm="false">
-        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" 
+        <div id="poster" class="poster" :class="[(mode === 'actual' || mode === 'table') ? 'mode-b' : 'mode-a', 'theme-' + theme]" 
              :style="{ 
                 width: posterWidth + 'px', 
-                height: showQRCode ? (mode === 'expect' ? (posterWidth * 1425 / 1200) + 'px' : (posterWidth * 2124 / 1536) + 'px') : 'auto' 
+                height: mode === 'thumbnail' ? (posterWidth * 900 / 1200) + 'px' : (showQRCode ? (mode === 'expect' ? (posterWidth * 1425 / 1200) + 'px' : (posterWidth * 2124 / 1536) + 'px') : 'auto') 
              }" 
              data-gramm="false" @click="handleCanvasClick">
             
-            <img v-if="showWatermark" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
+            <img v-if="showWatermark && mode !== 'thumbnail'" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
             
+            <div v-if="mode === 'thumbnail'" class="mode-thumbnail">
+                <div class="thumb-logo-box">
+                    <img src="logo.svg" alt="logo" onerror="this.style.display='none'">
+                    <span>金十数据</span>
+                </div>
+                
+                <div class="thumb-subtitle editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.subtitle = $event.target.innerText">{{ thumb.subtitle }}</div>
+                
+                <div class="thumb-main-title">
+                    <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.prefix = $event.target.innerText" style="color: var(--text-main);">{{ thumb.prefix }}</span>
+                    <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.highlight = $event.target.innerText" style="color: var(--num-color);">{{ thumb.highlight }}</span>
+                </div>
+            </div>
+
             <div v-if="mode === 'expect'" class="mode-expect" style="flex: 1;">
                 <div class="header-box">
                     <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
@@ -357,7 +368,7 @@
                 <div class="bento-grid">
                     <div class="glass-card card-large">
                         <div style="flex-shrink: 0; text-align: center;" :style="{ minWidth: numBoxWidth + 'px', width: numBoxWidth + 'px' }">
-                            <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.mainData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
+                            <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.mainData = $event.target.innerText">{{ splitUnit(ex.mainData).num }}<span class="data-unit">{{ splitUnit(ex.mainData).unit }}</span></div>
                         </div>
                         <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ex.mainDesc)" @blur="ex.mainDesc = $event.target.innerText"></div>
                     </div>
@@ -366,11 +377,11 @@
                         <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ex.leftDesc)" @blur="ex.leftDesc = $event.target.innerText"></div>
                     </div>
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.rightTopData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.rightTopData = $event.target.innerText">{{ splitUnit(ex.rightTopData).num }}<span class="data-unit">{{ splitUnit(ex.rightTopData).unit }}</span></div>
                         <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" @paste="onPastePlain" v-html="formatText(ex.rightTopDesc)" @blur="ex.rightTopDesc = $event.target.innerText"></div>
                     </div>
                     <div class="glass-card" style="text-align: center;">
-                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.rightBottomData = $event.target.innerText.replace(/\s/g, '')">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
+                        <div class="data-value editable" contenteditable="true" spellcheck="false" data-gramm="false" style="margin-bottom: 4px;" @paste="onPastePlain" @blur="ex.rightBottomData = $event.target.innerText">{{ splitUnit(ex.rightBottomData).num }}<span class="data-unit">{{ splitUnit(ex.rightBottomData).unit }}</span></div>
                         <div class="data-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" style="text-align: left;" @paste="onPastePlain" v-html="formatText(ex.rightBottomDesc)" @blur="ex.rightBottomDesc = $event.target.innerText"></div>
                     </div>
                 </div>
@@ -387,33 +398,13 @@
                         <span class="date-divider-group">&nbsp;|&nbsp; <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace('制图', '').trim()">{{ date }} 制图</span></span>
                     </div>
                 </div>
-
-                <div v-show="tb.desc || !isExporting" 
-                     class="table-desc editable" 
-                     :class="{'empty-placeholder': !tb.desc}"
-                     contenteditable="true" spellcheck="false" data-gramm="false" 
-                     @paste="onPastePlain" @blur="tb.desc = $event.target.innerText.trim()" 
-                     v-html="tb.desc ? formatText(tb.desc) : ''">
-                </div>
-
+                <div v-show="tb.desc || !isExporting" class="table-desc editable" :class="{'empty-placeholder': !tb.desc}" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="tb.desc = $event.target.innerText.trim()" v-html="tb.desc ? formatText(tb.desc) : ''"></div>
                 <div class="glass-card table-wrapper">
                     <table class="data-table">
-                        <colgroup>
-                            <col v-for="(w, i) in tb.colWidths" :key="'col'+i" :style="{ width: w }">
-                        </colgroup>
+                        <colgroup><col v-for="(w, i) in tb.colWidths" :key="'col'+i" :style="{ width: w }"></colgroup>
                         <tbody>
                             <tr v-for="(row, rIndex) in tb.data" :key="'row'+rIndex">
-                                <td v-for="(cell, cIndex) in row" v-if="!cell.hide" :key="'cell'+rIndex+'-'+cIndex" 
-                                    class="table-cell" 
-                                    :colspan="cell.colspan" :rowspan="cell.rowspan"
-                                    :class="{
-                                        'bg-theme': cell.bg === 'theme',
-                                        'bg-gray': cell.bg === 'gray',
-                                        'selected-cell': selectedCell && selectedCell.r === rIndex && selectedCell.c === cIndex
-                                    }"
-                                    :style="{ fontWeight: cell.bold ? 'bold' : 'normal', height: tb.rowHeight + 'px' }"
-                                    @click.stop="selectTbCell(rIndex, cIndex)">
-                                    
+                                <td v-for="(cell, cIndex) in row" v-if="!cell.hide" :key="'cell'+rIndex+'-'+cIndex" class="table-cell" :colspan="cell.colspan" :rowspan="cell.rowspan" :class="{'bg-theme': cell.bg === 'theme','bg-gray': cell.bg === 'gray','selected-cell': selectedCell && selectedCell.r === rIndex && selectedCell.c === cIndex}" :style="{ fontWeight: cell.bold ? 'bold' : 'normal', height: tb.rowHeight + 'px' }" @click.stop="selectTbCell(rIndex, cIndex)">
                                     <div class="table-cell-content editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="updateTbCellText(rIndex, cIndex, $event)">{{ cell.text }}</div>
                                 </td>
                             </tr>
@@ -439,383 +430,151 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="data-section">
                     <div class="sec1-head"><div class="sec-num">01</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s1Title = $event.target.innerText">{{ ac.s1Title }}</span></div>
                     <div class="sec1-body">
                         <div class="data-col-01" :style="{ minWidth: numBoxWidth + 'px', width: numBoxWidth + 'px' }">
-                            <div class="val-badge">
-                                <span class="val-lbl">公布值</span>
-                                <span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status" title="点击循环切换状态">{{ getStatusText(ac.s1Status) }}</span>
-                            </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s1Value = $event.target.innerText.replace(/\s/g, '')">
+                            <div class="val-badge"><span class="val-lbl">公布值</span><span class="status-tag editable clickable-tag" @click="toggleStatus('s1Status')" :class="ac.s1Status">{{ getStatusText(ac.s1Status) }}</span></div>
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s1Value = $event.target.innerText">
                                 <span class="sec-value">{{ splitUnit(ac.s1Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s1Value).unit }}</span>
                             </div>
                         </div>
                         <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s1Desc)" @blur="ac.s1Desc = $event.target.innerText"></div>
                     </div>
                 </div>
-
                 <div class="grid-2col">
-                    <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">02</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s2Title = $event.target.innerText">{{ ac.s2Title }}</span></div>
+                    <div class="sec-small" v-for="i in [2,3]" :key="i">
+                        <div class="sec-small-head"><div class="sec-num">0{{i}}</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac['s'+i+'Title'] = $event.target.innerText">{{ ac['s'+i+'Title'] }}</span></div>
                         <div class="sec-small-body">
-                            <div class="val-box">
-                                <div class="val-box-inner">
-                                    <div class="val-lbl" style="font-size: 16px;">公布值</div>
-                                    <div class="status-tag editable clickable-tag" @click="toggleStatus('s2Status')" :class="ac.s2Status" title="点击循环切换状态">{{ getStatusText(ac.s2Status) }}</div>
-                                </div>
-                            </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s2Value = $event.target.innerText.replace(/\s/g, '')">
-                                <span class="sec-value">{{ splitUnit(ac.s2Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s2Value).unit }}</span>
+                            <div class="val-box"><div class="val-box-inner"><div class="val-lbl" style="font-size: 16px;">公布值</div><div class="status-tag clickable-tag" @click="toggleStatus('s'+i+'Status')" :class="ac['s'+i+'Status']">{{ getStatusText(ac['s'+i+'Status']) }}</div></div></div>
+                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac['s'+i+'Value'] = $event.target.innerText">
+                                <span class="sec-value">{{ splitUnit(ac['s'+i+'Value']).num }}</span><span class="sec-unit">{{ splitUnit(ac['s'+i+'Value']).unit }}</span>
                             </div>
                         </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s2Desc)" @blur="ac.s2Desc = $event.target.innerText"></div>
-                    </div>
-                    
-                    <div class="sec-small">
-                        <div class="sec-small-head"><div class="sec-num">03</div> <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s3Title = $event.target.innerText">{{ ac.s3Title }}</span></div>
-                        <div class="sec-small-body">
-                            <div class="val-box">
-                                <div class="val-box-inner">
-                                    <div class="val-lbl" style="font-size: 16px;">公布值</div>
-                                    <div class="status-tag editable clickable-tag" @click="toggleStatus('s3Status')" :class="ac.s3Status" title="点击循环切换状态">{{ getStatusText(ac.s3Status) }}</div>
-                                </div>
-                            </div>
-                            <div class="num-col editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="ac.s3Value = $event.target.innerText.replace(/\s/g, '')">
-                                <span class="sec-value">{{ splitUnit(ac.s3Value).num }}</span><span class="sec-unit">{{ splitUnit(ac.s3Value).unit }}</span>
-                            </div>
-                        </div>
-                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.s3Desc)" @blur="ac.s3Desc = $event.target.innerText"></div>
+                        <div class="sec-desc editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac['s'+i+'Desc'])" @blur="ac['s'+i+'Desc'] = $event.target.innerText"></div>
                     </div>
                 </div>
-
                 <div class="banner-box">
                     <div class="banner-left editable" :style="{ width: numBoxWidth + 'px', flexShrink: 0 }" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.bannerTitle)" @blur="ac.bannerTitle = $event.target.innerText"></div>
                     <div class="banner-right editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" v-html="formatText(ac.bannerDesc)" @blur="ac.bannerDesc = $event.target.innerText"></div>
                 </div>
             </div>
 
-            <div class="footer" v-if="showQRCode">
+            <div class="footer" v-if="showQRCode && mode !== 'thumbnail'">
                 <div class="footer-left">
-                    <div class="site">
-                        <img src="icon.svg" style="height: 24px;" alt="" onerror="this.style.display='none'">
-                        JIN10.COM
-                    </div>
+                    <div class="site"><img src="icon.svg" style="height: 24px;" alt="" onerror="this.style.display='none'"> JIN10.COM</div>
                     <div class="slogan editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="slogan = $event.target.innerText.trim()">{{ slogan }}</div>
                 </div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <img :src="qrCodeUrl" class="qr-code" alt="QR" @click.stop="triggerQrUpload" title="点击更换二维码">
-                </div>
+                <img :src="qrCodeUrl" class="qr-code" alt="QR" @click.stop="triggerQrUpload" title="点击更换二维码">
             </div>
-            <div v-else style="height: 40px;"></div>
+            <div v-if="(!showQRCode) && mode !== 'thumbnail'" style="height: 40px;"></div>
         </div>
     </div>
 </div>
 
 <script>
     function createInitialTableData() {
-        const raw = [
-            ['指标名称', '2026 Q1 预期', '2026 Q2 预期'],
-            ['美国 CPI 同比', '3.1%', '2.8%'],
-            ['美国 核心 PCE', '2.5%', '2.3%'],
-            ['新增非农 (万人)', '18.5', '15.0'],
-            ['失业率', '3.9%', '4.0%'],
-            ['联邦基金利率', '4.50%', '4.25%']
-        ];
-        return raw.map((row, rIdx) => 
-            row.map((text) => ({ 
-                text: text, bold: rIdx === 0, bg: rIdx === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false 
-            }))
-        );
+        const raw = [['指标名称', '2026 Q1 预期', '2026 Q2 预期'],['美国 CPI 同比', '3.1%', '2.8%'],['美国 核心 PCE', '2.5%', '2.3%'],['新增非农 (万人)', '18.5', '15.0'],['失业率', '3.9%', '4.0%'],['联邦基金利率', '4.50%', '4.25%']];
+        return raw.map((row, rIdx) => row.map((text) => ({ text: text, bold: rIdx === 0, bg: rIdx === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false })));
     }
 
     new Vue({
         el: '#app',
         data: {
-            theme: 'default', 
-            mode: 'table', 
-            dataType: 'CPI',
-            date: '2026-04-10',
-            showWatermark: true,
-            showQRCode: true,
-            
-            titleFontSize: 50, 
-            posterWidth: 621,
-            numBoxWidth: 170,
-
+            theme: 'default', mode: 'thumbnail', dataType: 'CPI', date: '2026-04-10',
+            showWatermark: true, showQRCode: true, titleFontSize: 50, posterWidth: 621, numBoxWidth: 170,
             qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
             slogan: '看CPI，到金十，立即下载金十数据APP>>',
-
-            ex: {
-                title: '美国3月CPI预期', prefix: '看CPI，到', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。'
-            },
-            ac: {
-                title: '美国3月CPI数据', prefix: '看CPI，到', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。其中，汽油价格创纪录上涨21.2%，贡献了当月CPI涨幅的近四分之三。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键，其持续表明基础通胀可能正在以较慢的速度趋于稳定。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。医疗保健、个人护理以及二手车和卡车等指数出现下降。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。霍尔木兹海峡的关闭扰乱了航运，并推高了上月原油和汽油价格。即便海峡完全重开，能源和商品价格也不会立即回落至此前水平。'
-            },
-            tb: {
-                title: '全球宏观经济指标预测', prefix: '看数据，到',
-                desc: '以下数据基于各大投行最新发布的季度报告汇总，反映了市场对未来通胀、就业及经济增长的核心预期。点击单元格可以直接修改内容。',
-                rows: 6,
-                cols: 3,
-                colWidthsStr: '30 35 35', 
-                colWidths: ['30%', '35%', '35%'], 
-                rowHeight: 45, 
-                data: createInitialTableData()
-            },
-            selectedCell: null,
-            excelPaste: '',
-            savedMessage: '',
-            isInitializing: true,
-            isExporting: false 
+            thumb: { subtitle: '市 / 场 / 预 / 期', prefix: '美国3月', highlight: 'CPI' },
+            ex: { title: '美国3月CPI预期', prefix: '看CPI，到', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。' },
+            ac: { title: '美国3月CPI数据', prefix: '看CPI，到', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。' },
+            tb: { title: '全球宏观经济指标预测', prefix: '看数据，到', desc: '以下数据基于各大投行最新发布的季度报告汇总。点击单元格可以直接修改内容。', rows: 6, cols: 3, colWidthsStr: '30 35 35', colWidths: ['30%', '35%', '35%'], rowHeight: 45, data: createInitialTableData() },
+            selectedCell: null, excelPaste: '', savedMessage: '', isInitializing: true, isExporting: false 
         },
         mounted() {
             this.loadData();
             setTimeout(() => { 
                 this.isInitializing = false; 
-                this.$watch(
-                    function() {
-                        return {
-                            theme: this.theme, mode: this.mode, dataType: this.dataType,
-                            date: this.date, showWatermark: this.showWatermark,
-                            showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                            titleFontSize: this.titleFontSize, posterWidth: this.posterWidth, numBoxWidth: this.numBoxWidth,
-                            slogan: this.slogan, ex: this.ex, ac: this.ac, tb: this.tb 
-                        }
-                    },
-                    function(newVal) {
-                        try {
-                            localStorage.setItem('jin10_poster_draft', JSON.stringify(newVal));
-                            
-                            const now = new Date();
-                            const h = now.getHours();
-                            const m = now.getMinutes().toString().padStart(2, '0');
-                            this.savedMessage = `✓ ${h}时${m}分 已自动保存`;
-                            
-                            setTimeout(() => { this.savedMessage = ''; }, 2000);
-                        } catch (e) {
-                            console.warn('本地存储失败', e);
-                        }
-                    },
-                    { deep: true }
-                );
+                this.$watch(function() { return { theme: this.theme, mode: this.mode, dataType: this.dataType, date: this.date, showWatermark: this.showWatermark, showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl, titleFontSize: this.titleFontSize, posterWidth: this.posterWidth, numBoxWidth: this.numBoxWidth, slogan: this.slogan, thumb: this.thumb, ex: this.ex, ac: this.ac, tb: this.tb } },
+                function(newVal) {
+                    try {
+                        localStorage.setItem('jin10_poster_draft', JSON.stringify(newVal));
+                        const now = new Date();
+                        const h = now.getHours();
+                        const m = now.getMinutes().toString().padStart(2, '0');
+                        this.savedMessage = `✓ ${h}时${m}分 已自动保存`;
+                        setTimeout(() => { this.savedMessage = ''; }, 2000);
+                    } catch (e) { console.warn('存储失败', e); }
+                }, { deep: true });
             }, 100);
-            
             document.addEventListener('click', this.handleGlobalClick);
-            
-            const forceSyncAndSave = () => {
-                document.querySelectorAll('.editable').forEach(el => {
-                    el.dispatchEvent(new Event('blur'));
-                });
-                const toSave = {
-                    theme: this.theme, mode: this.mode, dataType: this.dataType,
-                    date: this.date, showWatermark: this.showWatermark,
-                    showQRCode: this.showQRCode, qrCodeUrl: this.qrCodeUrl,
-                    titleFontSize: this.titleFontSize, posterWidth: this.posterWidth, numBoxWidth: this.numBoxWidth,
-                    slogan: this.slogan, ex: this.ex, ac: this.ac, tb: this.tb 
-                };
-                localStorage.setItem('jin10_poster_draft', JSON.stringify(toSave));
+            const forceSync = () => {
+                document.querySelectorAll('.editable').forEach(el => el.dispatchEvent(new Event('blur')));
+                localStorage.setItem('jin10_poster_draft', JSON.stringify(this.$data));
             };
-            window.addEventListener('beforeunload', forceSyncAndSave);
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'hidden') forceSyncAndSave();
-            });
-        },
-        beforeDestroy() {
-            document.removeEventListener('click', this.handleGlobalClick);
+            window.addEventListener('beforeunload', forceSync);
         },
         watch: {
             dataType(newVal, oldVal) {
                 if (this.isInitializing) return; 
-                
                 if (this.ex.title.includes(oldVal)) this.ex.title = this.ex.title.replace(oldVal, newVal);
                 if (this.ac.title.includes(oldVal)) this.ac.title = this.ac.title.replace(oldVal, newVal);
-                if (this.ac.bannerTitle.includes(oldVal)) this.ac.bannerTitle = this.ac.bannerTitle.replace(oldVal, newVal);
                 if (this.tb.title.includes(oldVal)) this.tb.title = this.tb.title.replace(oldVal, newVal);
-                
                 if (newVal === '非农') {
                     this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看非农');
                     this.ex.prefix = '看非农，到'; this.ac.prefix = '看非农，到'; this.tb.prefix = '看非农，到';
-                    
-                    this.ex.mainData = '25万'; this.ex.mainDesc = '市场预计，美国3月非农就业人数将增加25万人，失业率维持在3.8%的低位。薪资增速维持稳健。';
-                    this.ex.rightTopData = '3.8%'; this.ex.rightBottomData = '0.3%';
-                    this.ac.title = '美国3月非农数据';
-                    this.ac.s1Title = '季调后非农就业人口'; this.ac.s1Value = '26.8万'; this.ac.s1Desc = '录得26.8万人，为2024年4月以来新高，大幅超市场预期的20万人。';
-                    this.ac.s2Title = '失业率'; this.ac.s2Value = '3.8%'; this.ac.s2Status = 'match'; this.ac.s2Desc = '符合预期，低于前值的3.9%。就业市场依然稳健。';
-                    this.ac.s3Title = '平均时薪月率'; this.ac.s3Value = '0.3%'; this.ac.s3Status = 'match'; this.ac.s3Desc = '录得0.3%，符合预期。';
-                    this.ac.bannerTitle = '3月非农<br>“超强定力”'; this.ac.bannerDesc = '由于就业人数超预期，美联储年内降息押注大幅下降，美联储短期无降息压力。';
-                } 
-                else if (newVal === 'CPI') {
+                    this.thumb.subtitle = '数 / 据 / 看 / 点'; this.thumb.highlight = '非农';
+                } else if (newVal === 'CPI') {
                     this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看CPI');
                     this.ex.prefix = '看CPI，到'; this.ac.prefix = '看CPI，到'; this.tb.prefix = '看数据，到';
-                    
-                    this.ex.mainData = '3.3%'; this.ex.mainDesc = '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。';
-                    this.ex.rightTopData = '2.7%'; this.ex.rightBottomData = '0.9%';
-                    this.ac.title = '美国3月CPI数据';
-                    this.ac.s1Title = '未季调CPI年率'; this.ac.s1Value = '3.3%'; this.ac.s1Desc = '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。其中，汽油价格创纪录上涨。';
-                    this.ac.s2Title = '核心CPI年率'; this.ac.s2Value = '2.6%'; this.ac.s2Status = 'low'; this.ac.s2Desc = '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。';
-                    this.ac.s3Title = '核心CPI月率'; this.ac.s3Value = '0.2%'; this.ac.s3Status = 'low'; this.ac.s3Desc = '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。';
-                    this.ac.bannerTitle = '3月CPI<br>“患上高烧”'; this.ac.bannerDesc = '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。';
+                    this.thumb.subtitle = '市 / 场 / 预 / 期'; this.thumb.highlight = 'CPI';
                 }
             }
         },
         methods: {
-            onPastePlain(e) {
-                e.preventDefault();
-                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            },
+            onPastePlain(e) { e.preventDefault(); const text = (e.originalEvent || e).clipboardData.getData('text/plain'); document.execCommand('insertText', false, text); },
             selectTbCell(r, c) { this.selectedCell = { r, c }; },
             handleCanvasClick(e) { if (!e.target.closest('.table-cell')) this.selectedCell = null; },
             handleGlobalClick(e) { if (!e.target.closest('.sidebar') && !e.target.closest('.table-cell')) this.selectedCell = null; },
-            updateTbCellText(r, c, event) {
-                let row = [...this.tb.data[r]];
-                row[c].text = event.target.innerText;
-                this.$set(this.tb.data, r, row);
-            },
+            updateTbCellText(r, c, event) { let row = [...this.tb.data[r]]; row[c].text = event.target.innerText; this.$set(this.tb.data, r, row); },
             changeTbSize(type, delta) {
                 if (type === 'row') {
-                    let newRows = this.tb.rows + delta;
-                    if (newRows < 1) return;
-                    this.tb.rows = newRows;
-                    if (delta > 0) {
-                        let newRow = new Array(this.tb.cols).fill(null).map(()=>({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false }));
-                        this.tb.data.push(newRow);
-                    } else {
-                        this.tb.data.pop();
-                    }
+                    let newRows = this.tb.rows + delta; if (newRows < 1) return; this.tb.rows = newRows;
+                    if (delta > 0) this.tb.data.push(new Array(this.tb.cols).fill(null).map(()=>({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false })));
+                    else this.tb.data.pop();
                 } else if (type === 'col') {
-                    let newCols = this.tb.cols + delta;
-                    if (newCols < 1) return;
-                    this.tb.cols = newCols;
-                    this.tb.data.forEach(row => {
-                        if (delta > 0) row.push({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
-                        else row.pop();
-                    });
-                    const w = Math.floor(100 / newCols);
-                    this.tb.colWidthsStr = new Array(newCols).fill(w).join(' ');
+                    let newCols = this.tb.cols + delta; if (newCols < 1) return; this.tb.cols = newCols;
+                    this.tb.data.forEach(row => { if (delta > 0) row.push({ text: '-', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false }); else row.pop(); });
                     this.updateColWidths();
                 }
                 this.selectedCell = null;
             },
-            updateColWidths() {
-                let widths = this.tb.colWidthsStr.trim().split(/\s+/);
-                this.tb.colWidths = widths.map(w => w.includes('%') ? w : w + '%');
-            },
-            toggleCellProp(prop) {
-                if(!this.selectedCell) return;
-                let {r, c} = this.selectedCell;
-                let row = [...this.tb.data[r]];
-                row[c][prop] = !row[c][prop];
-                this.$set(this.tb.data, r, row);
-            },
-            setCellBg(val) {
-                if(!this.selectedCell) return;
-                let {r, c} = this.selectedCell;
-                let row = [...this.tb.data[r]];
-                row[c].bg = val;
-                this.$set(this.tb.data, r, row);
-            },
-            mergeCell(direction) {
-                if(!this.selectedCell) return;
-                let {r, c} = this.selectedCell;
-                let cell = this.tb.data[r][c];
-                
-                if (direction === 'right') {
-                    let targetC = c + cell.colspan;
-                    if (targetC < this.tb.cols) {
-                        let target = this.tb.data[r][targetC];
-                        if (!target.hide && target.rowspan === cell.rowspan) {
-                            let targetRow = [...this.tb.data[r]];
-                            targetRow[targetC].hide = true;
-                            targetRow[c].colspan += target.colspan;
-                            this.$set(this.tb.data, r, targetRow);
-                        } else {
-                            alert("无法合并：右侧单元格已被合并或行高不一致！");
-                        }
-                    }
-                } else if (direction === 'down') {
-                    let targetR = r + cell.rowspan;
-                    if (targetR < this.tb.rows) {
-                        let target = this.tb.data[targetR][c];
-                        if (!target.hide && target.colspan === cell.colspan) {
-                            let targetRow = [...this.tb.data[targetR]];
-                            targetRow[c].hide = true;
-                            this.$set(this.tb.data, targetR, targetRow);
-                            
-                            let sourceRow = [...this.tb.data[r]];
-                            sourceRow[c].rowspan += target.rowspan;
-                            this.$set(this.tb.data, r, sourceRow);
-                        } else {
-                            alert("无法合并：下方单元格已被合并或列宽不一致！");
-                        }
-                    }
+            updateColWidths() { let widths = this.tb.colWidthsStr.trim().split(/\s+/); this.tb.colWidths = widths.map(w => w.includes('%') ? w : w + '%'); },
+            toggleCellProp(prop) { if(!this.selectedCell) return; let {r, c} = this.selectedCell; let row = [...this.tb.data[r]]; row[c][prop] = !row[c][prop]; this.$set(this.tb.data, r, row); },
+            setCellBg(val) { if(!this.selectedCell) return; let {r, c} = this.selectedCell; let row = [...this.tb.data[r]]; row[c].bg = val; this.$set(this.tb.data, r, row); },
+            mergeCell(dir) {
+                if(!this.selectedCell) return; let {r, c} = this.selectedCell; let cell = this.tb.data[r][c];
+                if (dir === 'right' && c + cell.colspan < this.tb.cols) {
+                    let target = this.tb.data[r][c + cell.colspan];
+                    if (!target.hide && target.rowspan === cell.rowspan) { this.tb.data[r][c + cell.colspan].hide = true; this.tb.data[r][c].colspan += target.colspan; }
+                } else if (dir === 'down' && r + cell.rowspan < this.tb.rows) {
+                    let target = this.tb.data[r + cell.rowspan][c];
+                    if (!target.hide && target.colspan === cell.colspan) { this.tb.data[r + cell.rowspan][c].hide = true; this.tb.data[r][c].rowspan += target.rowspan; }
                 }
             },
             unmergeCell() {
-                if(!this.selectedCell) return;
-                let {r, c} = this.selectedCell;
-                let cell = this.tb.data[r][c];
-                
-                for(let i=0; i<cell.rowspan; i++) {
-                    let targetRow = [...this.tb.data[r+i]];
-                    for(let j=0; j<cell.colspan; j++) {
-                        if(i===0 && j===0) continue;
-                        targetRow[c+j].hide = false;
-                        targetRow[c+j].colspan = 1;
-                        targetRow[c+j].rowspan = 1;
-                    }
-                    this.$set(this.tb.data, r+i, targetRow);
-                }
-                let sourceRow = [...this.tb.data[r]];
-                sourceRow[c].colspan = 1;
-                sourceRow[c].rowspan = 1;
-                this.$set(this.tb.data, r, sourceRow);
+                if(!this.selectedCell) return; let {r, c} = this.selectedCell; let cell = this.tb.data[r][c];
+                for(let i=0; i<cell.rowspan; i++) { for(let j=0; j<cell.colspan; j++) { this.tb.data[r+i][c+j].hide = false; this.tb.data[r+i][c+j].colspan = 1; this.tb.data[r+i][c+j].rowspan = 1; } }
             },
             importExcel() {
-                if (!this.excelPaste) return;
-                const rows = this.excelPaste.trim().split('\n');
-                if(rows.length === 0) return;
-                let maxCols = 0;
-                
-                const newData = rows.map((row, r) => {
-                    const cols = row.split('\t');
-                    maxCols = Math.max(maxCols, cols.length);
-                    return cols.map((text, c) => ({
-                        text: text.trim(), bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false
-                    }));
-                });
-                
-                newData.forEach(row => {
-                    while (row.length < maxCols) row.push({ text: '', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false });
-                });
-                
-                this.tb.rows = newData.length;
-                this.tb.cols = maxCols;
-                this.tb.data = newData;
-                
-                const w = Math.floor(100 / maxCols);
-                this.tb.colWidthsStr = new Array(maxCols).fill(w).join(' ');
-                this.updateColWidths();
-                
-                this.excelPaste = '';
-                this.selectedCell = null;
-                alert("✅ Excel 表格解析成功！");
+                if (!this.excelPaste) return; const rows = this.excelPaste.trim().split('\n'); let maxCols = 0;
+                const newData = rows.map((row, r) => { const cols = row.split('\t'); maxCols = Math.max(maxCols, cols.length); return cols.map((text, c) => ({ text: text.trim(), bold: r === 0, bg: r === 0 ? 'theme' : '', colspan: 1, rowspan: 1, hide: false })); });
+                newData.forEach(row => { while (row.length < maxCols) row.push({ text: '', bold: false, bg: '', colspan: 1, rowspan: 1, hide: false }); });
+                this.tb.rows = newData.length; this.tb.cols = maxCols; this.tb.data = newData; this.updateColWidths(); this.excelPaste = ''; alert("Excel解析成功！");
             },
-
             loadData() {
                 const saved = localStorage.getItem('jin10_poster_draft');
-                if (saved) {
-                    try {
-                        let parsed = JSON.parse(saved);
-                        
-                        for (let key in parsed) {
-                            if (this[key] !== undefined) {
-                                this[key] = parsed[key];
-                            }
-                        }
-                    } catch(e) { console.error('加载缓存失败', e); }
-                }
+                if (saved) { try { let parsed = JSON.parse(saved); for (let key in parsed) { if (this[key] !== undefined) this[key] = parsed[key]; } } catch(e) {} }
             },
             triggerQrUpload() { this.$refs.qrInput.click(); },
             uploadQrCode(event) {
@@ -825,88 +584,42 @@
                     reader.onload = (e) => {
                         const img = new Image();
                         img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const MAX_WIDTH = 300;
-                            const scaleSize = MAX_WIDTH / img.width;
-                            canvas.width = MAX_WIDTH;
-                            canvas.height = img.height * scaleSize;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            const canvas = document.createElement('canvas'); const MAX_WIDTH = 300; const scaleSize = MAX_WIDTH / img.width;
+                            canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
+                            const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                             this.qrCodeUrl = canvas.toDataURL('image/jpeg', 0.85);
                         };
                         img.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
-                event.target.value = '';
             },
-            toggleStatus(field) {
-                const states = ['match', 'high', 'low'];
-                const currentIndex = states.indexOf(this.ac[field]);
-                const nextIndex = (currentIndex + 1) % states.length;
-                this.ac[field] = states[nextIndex];
-            },
-            splitUnit(val) {
-                if (!val) return { num: '', unit: '' };
-                const match = String(val).match(/^([-\d.]+)(.*)$/);
-                return match ? { num: match[1], unit: match[2] } : { num: val, unit: '' };
-            },
+            toggleStatus(field) { const states = ['match', 'high', 'low']; this.ac[field] = states[(states.indexOf(this.ac[field]) + 1) % 3]; },
+            splitUnit(val) { if (!val) return { num: '', unit: '' }; const match = String(val).match(/^([-\d.]+)(.*)$/); return match ? { num: match[1], unit: match[2] } : { num: val, unit: '' }; },
             formatText(text) { return text ? text.replace(/\n/g, '<br>') : ''; },
-            getStatusText(status) {
-                return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期');
-            },
+            getStatusText(status) { return status === 'match' ? '➖ 符合预期' : (status === 'high' ? '▲ 高于预期' : '▼ 低于预期'); },
             exportImage() {
-                this.selectedCell = null; 
-                this.isExporting = true; 
-                
+                this.selectedCell = null; this.isExporting = true;
                 setTimeout(() => {
                     const element = document.getElementById('poster');
+                    let targetWidth = 1536; 
+                    if (this.mode === 'thumbnail') targetWidth = 1200;
+                    else if (this.showQRCode) targetWidth = (this.mode === 'expect' ? 1200 : 1536);
                     
-                    let targetWidth = 1242; 
-                    if (this.showQRCode) {
-                        targetWidth = this.mode === 'expect' ? 1200 : 1536;
-                    }
-                    
-                    const scale = targetWidth / element.offsetWidth;
-
-                    const options = {
-                        scale: scale, useCORS: true, backgroundColor: null, logging: false,
-                        ignoreElements: (node) => {
-                            if (node.tagName && node.tagName.toLowerCase().includes('grammarly')) return true;
-                            if (node.className && typeof node.className === 'string' && node.className.includes('grammarly')) return true;
-                            if (node.hasAttribute && node.hasAttribute('data-grammarly-shadow-root')) return true;
-                            return false;
-                        }
-                    };
-
-                    const btn = document.querySelector('.btn-export');
-                    const originalText = btn.innerText;
-                    btn.innerText = '正在生成 高清大图...';
-
-                    let prefixMap = { 'expect': '预期', 'actual': '数据公布', 'table': '前瞻图表' };
-                    
-                    html2canvas(element, options).then(canvas => {
-                        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                    html2canvas(element, { 
+                        scale: targetWidth / element.offsetWidth, useCORS: true, backgroundColor: null, logging: false,
+                        ignoreElements: (node) => (node.className && typeof node.className === 'string' && node.className.includes('grammarly'))
+                    }).then(canvas => {
                         const link = document.createElement('a');
-                        link.download = `金十_${this.dataType}_${prefixMap[this.mode]}_${this.date}.jpg`;
-                        link.href = imgData;
-                        document.body.appendChild(link);
+                        link.download = `金十_${this.dataType}_${this.mode}_${this.date}.jpg`;
+                        link.href = canvas.toDataURL('image/jpeg', 0.9);
                         link.click();
-                        document.body.removeChild(link);
-                        
-                        btn.innerText = originalText;
-                        this.isExporting = false; 
-                    }).catch(err => {
-                        alert('导出失败，请尝试在本地环境(Live Server)运行。');
-                        console.error(err);
-                        btn.innerText = originalText;
-                        this.isExporting = false; 
+                        this.isExporting = false;
                     });
-                }, 100); 
+                }, 100);
             }
         }
     });
 </script>
-
 </body>
 </html>
