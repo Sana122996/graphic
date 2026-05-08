@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (全尺寸覆盖旗舰版)</title>
+    <title>数据长图生成器 (细节打磨终极版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -120,7 +120,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-bottom: 40px; /* 视觉补偿，让重心上提 */
+            padding-bottom: 40px; 
         }
         .thumb-logo-box {
             display: flex;
@@ -133,30 +133,33 @@
             height: 52px;
             object-fit: contain;
         }
-        .thumb-logo-box span {
-            font-size: 42px;
-            font-weight: 900;
-            color: #4A90E2;
-            font-family: 'Noto Sans SC', sans-serif;
-            letter-spacing: 2px;
-        }
         .thumb-subtitle {
             font-family: 'Noto Sans SC', sans-serif;
             font-size: 54px;
             font-weight: 400;
             color: var(--text-main);
             margin-bottom: 25px;
-            letter-spacing: 15px; /* 还原样图中的宽间距 */
+            letter-spacing: 15px; 
             white-space: nowrap;
             opacity: 0.9;
         }
+        /* 💡 修复：强制Flex布局居中并去间隙，同时缩小字号到 96px */
         .thumb-main-title {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0; /* 强制间隙为0 */
             font-family: 'Noto Serif SC', serif !important;
-            font-weight: 900 !important; /* 强制锁定 Heavy 字重 */
-            font-size: 120px;
+            font-weight: 900 !important; 
+            font-size: 96px; /* 字号缩小 */
             line-height: 1.1;
-            letter-spacing: 2px;
+            letter-spacing: 0; /* 取消多余的字间距 */
             white-space: nowrap;
+        }
+        /* 💡 修复：强制将思源宋体和 Heavy 赋予里层的编辑节点 */
+        .thumb-main-title span {
+            font-family: 'Noto Serif SC', serif !important;
+            font-weight: 900 !important;
         }
 
         /* ==================== 表格模式 特有样式 ==================== */
@@ -340,14 +343,12 @@
             <div v-if="mode === 'thumbnail'" class="mode-thumbnail">
                 <div class="thumb-logo-box">
                     <img src="logo.svg" alt="logo" onerror="this.style.display='none'">
-                    <span>金十数据</span>
-                </div>
+                    </div>
                 
                 <div class="thumb-subtitle editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.subtitle = $event.target.innerText">{{ thumb.subtitle }}</div>
                 
                 <div class="thumb-main-title">
-                    <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.prefix = $event.target.innerText" style="color: var(--text-main);">{{ thumb.prefix }}</span>
-                    <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.highlight = $event.target.innerText" style="color: var(--num-color);">{{ thumb.highlight }}</span>
+                    <span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.prefix = $event.target.innerText" style="color: var(--text-main);">{{ thumb.prefix }}</span><span class="editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.highlight = $event.target.innerText" style="color: var(--num-color);">{{ thumb.highlight }}</span>
                 </div>
             </div>
 
