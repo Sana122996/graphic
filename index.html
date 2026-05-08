@@ -80,14 +80,14 @@
         .watermark-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; pointer-events: none; z-index: 9999; object-fit: contain; filter: brightness(0); }
         .theme-dark .watermark-logo { filter: brightness(0) invert(1); opacity: 0.04; }
 
-        .poster { width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s, width 0.3s;}
+        .poster { display: flex; flex-direction: column; width: 621px; position: relative; overflow: hidden; background-color: #fff; transition: background 0.3s, width 0.3s;}
         .title-bento, .main-title { font-family: 'Noto Serif SC', serif !important; font-weight: 900; margin: 0; letter-spacing: 1px; transition: font-size 0.2s; }
         
-        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; position: relative; z-index: 2; min-height: 80px; }
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 15px; position: relative; z-index: 2; min-height: 80px; }
         .footer-left .site { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; }
         .footer-left .slogan { font-size: 16px; color: var(--text-main); }
         
-        .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: cover; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .qr-code { width: 80px; height: 80px; background: #fff; padding: 4px; border-radius: 4px; object-fit: contain; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .qr-code:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); outline: 2px dashed #FF4D4F; }
         
         .prefix-text { font-weight: 400; font-size: 14px; opacity: 0.85; white-space: nowrap;}
@@ -99,12 +99,12 @@
         .poster.mode-a { padding: 40px; background-image: radial-gradient(circle at 10% 10%, rgba(var(--accent), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--accent), 0.1) 0%, transparent 40%), linear-gradient(to bottom right, var(--bg-base) 0%, var(--bg-base) 100%); background-color: var(--bg-base); }
         .glass-card { background-color: rgba(var(--card-bg-rgb), 0.6); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); z-index: 2; position: relative; padding: 24px; }
         
-        .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150, 150, 150, 0.3); padding-bottom: 20px;}
+        .mode-expect .header-box { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; position: relative; z-index: 2; }
         .mode-expect .meta-section { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
         .mode-expect .header-meta { display: flex; align-items: center; justify-content: flex-end; font-size: 18px; font-weight: bold; color: var(--text-main); line-height: 1; }
         .mode-expect .header-logo { height: 28px; margin-left: 0; object-fit: contain; }
         .mode-expect .title-bento { color: var(--text-main); line-height: 1.1;}
-        .mode-expect .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; }
+        .mode-expect .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; z-index: 2; }
         .mode-expect .card-large { grid-column: span 2; display: flex; align-items: center; gap: 30px; }
         .mode-expect .card-tall { grid-row: span 2; }
         .mode-expect .data-value { font-size: 64px; font-weight: 900; color: var(--num-color); margin: 0; line-height: 0.9; text-align: center; transition: color 0.3s;}
@@ -113,7 +113,7 @@
         .mode-expect .card-title { font-size: 22px; font-weight: bold; color: var(--text-main); margin-top: 0; margin-bottom: 10px; }
 
         /* ==================== 表格模式 特有样式 ==================== */
-        .mode-table .header-box-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; position: relative; z-index: 2; border-bottom: 1px solid rgba(150,150,150,0.3); padding-bottom: 20px; text-align: center;}
+        .mode-table .header-box-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; z-index: 2; text-align: center;}
         .mode-table .centered-title { color: var(--text-main); margin-bottom: 12px; line-height: 1.2;}
         .mode-table .meta-centered { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: normal; color: var(--text-main); opacity: 0.8; gap: 8px;}
         .mode-table .header-logo { height: 20px; object-fit: contain; }
@@ -133,7 +133,7 @@
 
         /* ==================== 模式 B：公布数据模式 ==================== */
         .poster.mode-b { padding: 40px; background-color: var(--b-bg); color: var(--b-text); }
-        .mode-b .header-box { display: flex; align-items: center; gap: 15px; flex-wrap: nowrap; margin-bottom: 20px; position: relative; z-index: 2; padding-bottom: 15px; border-bottom: 1px solid rgba(150,150,150,0.3); white-space: nowrap; }
+        .mode-b .header-box { display: flex; align-items: center; gap: 15px; flex-wrap: nowrap; margin-bottom: 15px; position: relative; z-index: 2; white-space: nowrap; }
         .mode-b .date-box-left { background: var(--b-date-bg); color: white; padding: 12px 18px; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; }
         .mode-b .date-year { font-size: 20px; letter-spacing: 6px; opacity: 0.9; margin-bottom: 4px; }
         .mode-b .date-md { font-size: 38px; font-weight: 900; line-height: 1; }
@@ -142,30 +142,36 @@
         .mode-b .sub-meta { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: bold; color: var(--b-text); opacity: 0.85;}
         .mode-b .sub-meta img { height: 22px; opacity: 0.9;} 
         .mode-b .date-divider-group { font-weight: 400; font-size: 14px; opacity: 0.7; margin-left: 4px;}
-        .mode-b .data-section { background: var(--b-card); margin-bottom: 20px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
+        .mode-b .data-section { background: var(--b-card); margin-bottom: 12px; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.05);}
         .mode-b .sec1-head { background: var(--b-head); color: white; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: bold; }
         .mode-b .sec-num { background: var(--b-accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold;}
-        .mode-b .sec1-body { display: flex; padding: 16px 20px; align-items: center; gap: 25px; }
+        .mode-b .sec1-body { display: flex; padding: 12px 16px; align-items: center; gap: 15px; }
         .mode-b .data-col-01 { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; }
         .mode-b .val-badge { background: var(--b-val-bg); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px; margin-bottom: 2px; transition: background 0.3s; }
         .mode-b .val-badge .val-lbl { font-size: 15px; font-weight: bold; color: var(--b-val-lbl); margin: 0; transition: color 0.3s;}
         .mode-b .status-tag { display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; color: var(--b-text); opacity: 0.8; user-select: none; transition: all 0.2s; white-space: nowrap; }
         .mode-b .status-tag.low { color: #27AE60; opacity: 1; }
         .mode-b .status-tag.high { color: var(--num-color); opacity: 1; }
-        .mode-b .num-col { flex-shrink: 0; }
-        .mode-b .sec-value { font-size: 72px; font-weight: 900; color: var(--num-color); line-height: 0.9; transition: color 0.3s;}
-        .mode-b .sec-unit { font-size: 32px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
+        
+        /* 💡 修复：强制不换行，并等比例缩减字号 */
+        .mode-b .num-col { flex-shrink: 0; white-space: nowrap; }
+        .mode-b .sec-value { font-size: 60px; font-weight: 900; color: var(--num-color); line-height: 0.9; transition: color 0.3s;}
+        .mode-b .sec-unit { font-size: 28px; margin-left: 2px; color: var(--num-color); font-weight: bold;}
+        
         .mode-b .sec-desc { font-size: 15px; line-height: 1.6; color: var(--b-text); opacity: 0.85; flex: 1; text-align: justify;}
-        .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2; margin-bottom: 20px;}
-        .mode-b .sec-small { background: var(--b-card); padding: 16px 20px; border: 1px solid rgba(0,0,0,0.05);}
-        .mode-b .sec-small-head { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(150,150,150,0.2);}
+        .mode-b .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; z-index: 2; margin-bottom: 12px;}
+        .mode-b .sec-small { background: var(--b-card); padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);}
+        .mode-b .sec-small-head { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid rgba(150,150,150,0.2);}
         .mode-b .sec-small-body { display: flex; gap: 15px; align-items: center; margin-bottom: 8px;}
         .mode-b .val-box-inner { background: var(--b-val-bg); padding: 6px 10px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); transition: background 0.3s;}
         .mode-b .val-box-inner .val-lbl { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: var(--b-val-lbl); transition: color 0.3s;}
         .mode-b .sec-small-body .status-tag { font-size: 11px; }
-        .mode-b .sec-small-body .sec-value { font-size: 58px; }
-        .mode-b .sec-small-body .sec-unit { font-size: 26px; }
-        .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 30px;}
+        
+        /* 💡 修复：副模块数据字号等比缩减 */
+        .mode-b .sec-small-body .sec-value { font-size: 50px; }
+        .mode-b .sec-small-body .sec-unit { font-size: 24px; }
+        
+        .mode-b .banner-box { display: flex; align-items: stretch; position: relative; z-index: 2; margin-top: 15px;}
         .mode-b .banner-left { background: var(--b-date-bg); color: white; padding: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-align: center; border-radius: 8px 0 0 8px; flex-shrink: 0;}
         .mode-b .banner-right { background: var(--b-head); color: white; padding: 20px; flex: 1; font-size: 14px; line-height: 1.7; text-align: justify; opacity: 0.95; border-radius: 0 8px 8px 0; }
     </style>
@@ -325,11 +331,16 @@
     </div>
 
     <div class="canvas-area" data-gramm="false">
-        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" :style="{ width: posterWidth + 'px' }" data-gramm="false" @click="handleCanvasClick">
+        <div id="poster" class="poster" :class="[mode === 'actual' ? 'mode-b' : 'mode-a', 'theme-' + theme]" 
+             :style="{ 
+                width: posterWidth + 'px', 
+                height: showQRCode ? (mode === 'expect' ? (posterWidth * 1425 / 1200) + 'px' : (posterWidth * 2124 / 1536) + 'px') : 'auto' 
+             }" 
+             data-gramm="false" @click="handleCanvasClick">
             
             <img v-if="showWatermark" src="watermark.svg" class="watermark-logo" alt="" onerror="this.style.display='none'">
             
-            <div v-if="mode === 'expect'" class="mode-expect">
+            <div v-if="mode === 'expect'" class="mode-expect" style="flex: 1;">
                 <div class="header-box">
                     <h1 class="title-bento editable" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="ex.title = $event.target.innerText">{{ ex.title }}</h1>
                     <div class="meta-section">
@@ -365,7 +376,7 @@
                 </div>
             </div>
 
-            <div v-if="mode === 'table'" class="mode-table">
+            <div v-if="mode === 'table'" class="mode-table" style="flex: 1;">
                 <div class="header-box-centered">
                     <h1 class="title-bento editable centered-title" :style="{ fontSize: titleFontSize + 'px' }" contenteditable="true" spellcheck="false" data-gramm="false" @keydown.enter.prevent @paste="onPastePlain" @blur="tb.title = $event.target.innerText">{{ tb.title }}</h1>
                     <div class="meta-centered">
@@ -411,7 +422,7 @@
                 </div>
             </div>
 
-            <div v-if="mode === 'actual'">
+            <div v-if="mode === 'actual'" style="flex: 1;">
                 <div class="header-box">
                     <div class="date-box-left editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="date = $event.target.innerText.replace(/[\n\s]+/g, '-')">
                         <span class="date-year">{{ date.split('-')[0] }}</span>
@@ -575,7 +586,12 @@
                     function(newVal) {
                         try {
                             localStorage.setItem('jin10_poster_draft', JSON.stringify(newVal));
-                            this.savedMessage = '✓ 已自动保存';
+                            
+                            const now = new Date();
+                            const h = now.getHours();
+                            const m = now.getMinutes().toString().padStart(2, '0');
+                            this.savedMessage = `✓ ${h}时${m}分 已自动保存`;
+                            
                             setTimeout(() => { this.savedMessage = ''; }, 2000);
                         } catch (e) {
                             console.warn('本地存储失败', e);
@@ -587,9 +603,7 @@
             
             document.addEventListener('click', this.handleGlobalClick);
             
-            // 💡 终极修复：断电级强制保存，拦截刷新/关闭网页瞬间的数据丢失
             const forceSyncAndSave = () => {
-                // 强行让所有正在编辑的输入框触发 blur（失焦）事件，把没保存的文字同步给 Vue
                 document.querySelectorAll('.editable').forEach(el => {
                     el.dispatchEvent(new Event('blur'));
                 });
@@ -795,7 +809,6 @@
                     try {
                         let parsed = JSON.parse(saved);
                         
-                        // 💡 修复：确保用直接赋值保留 Vue 2 的深层响应式追踪，解决刷新丢失问题
                         for (let key in parsed) {
                             if (this[key] !== undefined) {
                                 this[key] = parsed[key];
@@ -848,7 +861,12 @@
                 
                 setTimeout(() => {
                     const element = document.getElementById('poster');
-                    const targetWidth = 1242;
+                    
+                    let targetWidth = 1242; 
+                    if (this.showQRCode) {
+                        targetWidth = this.mode === 'expect' ? 1200 : 1536;
+                    }
+                    
                     const scale = targetWidth / element.offsetWidth;
 
                     const options = {
