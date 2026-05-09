@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据长图生成器 (细节打磨终极版)</title>
+    <title>数据长图生成器 (全尺寸覆盖旗舰版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -143,20 +143,18 @@
             white-space: nowrap;
             opacity: 0.9;
         }
-        /* 💡 修复：强制Flex布局居中并去间隙，同时缩小字号到 96px */
         .thumb-main-title {
             display: flex;
             justify-content: center;
             align-items: baseline;
-            gap: 0; /* 强制间隙为0 */
+            gap: 0;
             font-family: 'Noto Serif SC', serif !important;
             font-weight: 900 !important; 
-            font-size: 96px; /* 字号缩小 */
+            font-size: 96px; 
             line-height: 1.1;
-            letter-spacing: 0; /* 取消多余的字间距 */
+            letter-spacing: 0; 
             white-space: nowrap;
         }
-        /* 💡 修复：强制将思源宋体和 Heavy 赋予里层的编辑节点 */
         .thumb-main-title span {
             font-family: 'Noto Serif SC', serif !important;
             font-weight: 900 !important;
@@ -343,7 +341,7 @@
             <div v-if="mode === 'thumbnail'" class="mode-thumbnail">
                 <div class="thumb-logo-box">
                     <img src="logo.svg" alt="logo" onerror="this.style.display='none'">
-                    </div>
+                </div>
                 
                 <div class="thumb-subtitle editable" contenteditable="true" spellcheck="false" data-gramm="false" @paste="onPastePlain" @blur="thumb.subtitle = $event.target.innerText">{{ thumb.subtitle }}</div>
                 
@@ -486,7 +484,7 @@
             showWatermark: true, showQRCode: true, titleFontSize: 50, posterWidth: 621, numBoxWidth: 170,
             qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.jin10.com', 
             slogan: '看CPI，到金十，立即下载金十数据APP>>',
-            thumb: { subtitle: '市 / 场 / 预 / 期', prefix: '美国3月', highlight: 'CPI' },
+            thumb: { subtitle: '市/场/预/期', prefix: '美国3月', highlight: 'CPI' },
             ex: { title: '美国3月CPI预期', prefix: '看CPI，到', mainData: '3.3%', mainDesc: '市场预计，美国3月整体通胀同比将上涨3.3%，较前值大幅加速。美国银行预计3月能源价格将暴涨10.6%。', leftTitle: 'FED短期降息无望', leftDesc: '周二宣布的两周停火缓解压力，但冲击已扩散。市场一致认为，美联储短期内不会调整利率。', rightTopData: '2.7%', rightTopDesc: '核心CPI同比料为2.7%，高于2月的0.08%。', rightBottomData: '0.9%', rightBottomDesc: '整体CPI环比预期为0.9%。' },
             ac: { title: '美国3月CPI数据', prefix: '看CPI，到', s1Title: '未季调CPI年率', s1Value: '3.3%', s1Status: 'match', s1Desc: '美国3月CPI年率录得3.3%，为2024年5月以来新高，符合市场预期。CPI月率跃升0.9%，创2022年以来最大涨幅。', s2Title: '核心CPI年率', s2Value: '2.6%', s2Status: 'low', s2Desc: '美国3月未季调核心CPI年率录得2.6%，低于预期的2.7%。核心数据是关键。', s3Title: '核心CPI月率', s3Value: '0.2%', s3Status: 'low', s3Desc: '核心CPI月率为0.2%，低于预期。住房成本仍是核心来源。', bannerTitle: '3月CPI<br>“患上高烧”', bannerDesc: '数据公布后，市场定价显示，对美联储年内降息一次的押注上升。本次报告首次反映中东战争对美国通胀的影响。' },
             tb: { title: '全球宏观经济指标预测', prefix: '看数据，到', desc: '以下数据基于各大投行最新发布的季度报告汇总。点击单元格可以直接修改内容。', rows: 6, cols: 3, colWidthsStr: '30 35 35', colWidths: ['30%', '35%', '35%'], rowHeight: 45, data: createInitialTableData() },
@@ -524,11 +522,11 @@
                 if (newVal === '非农') {
                     this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看非农');
                     this.ex.prefix = '看非农，到'; this.ac.prefix = '看非农，到'; this.tb.prefix = '看非农，到';
-                    this.thumb.subtitle = '数 / 据 / 看 / 点'; this.thumb.highlight = '非农';
+                    this.thumb.subtitle = '数/据/看/点'; this.thumb.highlight = '非农';
                 } else if (newVal === 'CPI') {
                     this.slogan = this.slogan.replace(/看(CPI|数据|非农)/, '看CPI');
                     this.ex.prefix = '看CPI，到'; this.ac.prefix = '看CPI，到'; this.tb.prefix = '看数据，到';
-                    this.thumb.subtitle = '市 / 场 / 预 / 期'; this.thumb.highlight = 'CPI';
+                    this.thumb.subtitle = '市/场/预/期'; this.thumb.highlight = 'CPI';
                 }
             }
         },
